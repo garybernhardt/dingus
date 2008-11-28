@@ -8,7 +8,7 @@ class WhenRunningFixtureOnAModule(object):
     def setup(self):
         self.module = self._create_fake_module()
         self.class_under_test = self._create_class_under_test()
-        self.mocking_class = self._create_mocking_class()
+        self.fixture_class = self._create_fixture_class()
 
     def _create_fake_module(self):
         module = new.module('test_module')
@@ -23,32 +23,32 @@ class WhenRunningFixtureOnAModule(object):
         self.module.ClassThatWouldBeUnderTest = ClassThatWouldBeUnderTest
         return ClassThatWouldBeUnderTest
 
-    def _create_mocking_class(self):
-        class MockingClass(DingusFixture(self.class_under_test)):
+    def _create_fixture_class(self):
+        class FixtureClass(DingusFixture(self.class_under_test)):
             pass
-        return MockingClass
+        return FixtureClass
 
     def teardown(self):
         del sys.modules[self.module.__name__]
 
 
 class WhenCallingSetupFunction(WhenRunningFixtureOnAModule):
-    def should_mock_module_attributes(self):
-        self.mocking_class().setup()
+    def should_replace_module_attributes(self):
+        self.fixture_class().setup()
         assert isinstance(self.module.value, Dingus)
 
 
 class WhenCallingTeardownFunction(WhenRunningFixtureOnAModule):
     def setup(self):
         super(WhenCallingTeardownFunction, self).setup()
-        self.mocking_object = self.mocking_class()
-        self.original_module_dict = self.mocking_object.__dict__.copy()
-        self.mocking_object.setup()
-        self.mocking_object.teardown()
+        self.fixture_object = self.fixture_class()
+        self.original_module_dict = self.fixture_object.__dict__.copy()
+        self.fixture_object.setup()
+        self.fixture_object.teardown()
 
-    def should_unmock_module_attributes(self):
+    def should_restore_module_attributes(self):
         assert self.module.value is 'value'
 
-    def should_leave_globals_as_they_were_before_mock(self):
-        assert self.mocking_object.__dict__ == self.original_module_dict
+    def should_leave_globals_as_they_were_before_fixture(self):
+        assert self.fixture_object.__dict__ == self.original_module_dict
 
