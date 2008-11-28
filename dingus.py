@@ -1,0 +1,226 @@
+# This mock library was written by Michael Foord, is licensed under the BSD
+# license, and is available at http://www.voidspace.org.uk/python/mock.html.
+
+
+import sys
+import new
+import re
+
+
+def ModuleMocker(class_under_test):
+    module_name = class_under_test.__module__
+    module = sys.modules[module_name]
+
+    def setup(self):
+        exclusions = {class_under_test.__name__: class_under_test}
+        mock_module(module, **exclusions)
+
+    def teardown(self):
+        restore_module(module)
+
+    mock_fixture_class = new.classobj('%sMock' % module_name,
+                                      (object,),
+                                      {})
+    mock_fixture_class.setup = setup
+    mock_fixture_class.teardown = teardown
+    return mock_fixture_class
+
+
+def wipe_module(module):
+    old_module_dict = module.__dict__.copy()
+    module.__dict__.clear()
+    module.__dict__.update(__builtins__)
+    module.__dict__['__mocked_dict__'] = old_module_dict
+
+
+def mock_module(module, **manual_globals):
+    module_keys = set(module.__dict__.iterkeys())
+    builtin_keys = set(__builtins__.iterkeys())
+    manual_keys = set(manual_globals.iterkeys())
+
+    assert module_keys.issuperset(manual_globals)
+    assert not builtin_keys.intersection(manual_globals)
+
+    mocked_keys = module_keys - builtin_keys - manual_keys
+    wipe_module(module)
+    for key in mocked_keys:
+        module.__dict__[key] = Mock()
+    module.__dict__.update(manual_globals)
+
+
+def restore_module(module):
+    old_module_dict = module.__dict__['__mocked_dict__']
+    module.__dict__.clear()
+    module.__dict__.update(old_module_dict)
+
+
+# These sentinels are used for argument defaults because the user might want
+# to pass in None, which is different in some cases than passing nothing.
+class NoReturnValue(object):
+    pass
+class NoArgument(object):
+    pass
+
+
+class DontCare(object):
+    pass
+
+
+class Call(tuple):
+    def __new__(cls, name, args, kwargs, return_value):
+        return tuple.__new__(cls, (name, args, kwargs, return_value))
+
+    def __init__(self, *args):
+        self.name = self[0]
+        self.args = self[1]
+        self.kwargs = self[2]
+        self.return_value = self[3]
+
+
+class CallList(list):
+    @staticmethod
+    def _match_args(call, args):
+        if args is NoArgument:
+            return True
+        elif len(args) != len(call.args):
+            return False
+        else:
+            return all(args[i] in (DontCare, call.args[i])
+                       for i in range(len(call.args)))
+
+    def one(self):
+        assert len(self) == 1
+        return self[0]
+
+    def __call__(self, name=NoArgument, args=NoArgument, kwargs=NoArgument):
+        name_re = None if name is NoArgument else re.compile(name)
+        return CallList([call for call in self
+                         if (name is NoArgument or name_re.search(call.name))
+                         and self._match_args(call, args)
+                         and (kwargs is NoArgument or kwargs == call.kwargs)])
+
+
+class Mock(object):
+    def __init__(self, **kwargs):
+        self._parent, self._name = None, None
+        self.reset()
+
+        for attr_name, attr_value in kwargs.iteritems():
+            setattr(self, attr_name, attr_value)
+
+        self._replace_init_method()
+
+    @classmethod
+    def many(cls, count):
+        return tuple(cls() for _ in range(count))
+
+    def _mocked_init(self, *args, **kwargs):
+        return self.__getattr__('__init__')(*args, **kwargs)
+
+    def _replace_init_method(self):
+        self.__init__ = self._mocked_init
+
+    def _create_child(self, name):
+        child = Mock()
+        child._name = name
+        child._parent = self
+        return child
+
+    def reset(self):
+        self._return_value = NoReturnValue
+        self.calls = CallList()
+        self._children = {}
+
+    def _get_return_value(self):
+        if self._return_value is NoReturnValue:
+            self._return_value = self._create_child('()')
+        return self._return_value
+
+    def _set_return_value(self, value):
+        self._return_value = value
+
+    return_value = property(_get_return_value, _set_return_value)
+
+    def __call__(self, *args, **kwargs):
+        if self.return_value is NoReturnValue:
+            self.return_value = self._create_child('()')
+
+        self._log_call_in_parent(self._name, args, kwargs, self.return_value)
+        self._log_call('()', args, kwargs, self.return_value)
+
+        return self.return_value
+
+    def _log_call_in_parent(self, name, args, kwargs, return_value):
+        parent = self._parent
+        if parent is None:
+            return
+
+        parent._log_call(name, args, kwargs, return_value)
+
+        if parent._name is not None:
+            separator = ('' if (name.startswith('()') or name.startswith('['))
+                         else '.')
+            name = parent._name + separator + name
+            parent._log_call_in_parent(name, args, kwargs, return_value)
+
+    def _log_call(self, name, args, kwargs, return_value):
+        self.calls.append(Call(name, args, kwargs, return_value))
+
+    def _should_ignore_attribute(self, name):
+        return (name.startswith('__')
+                and name.endswith('__')
+                and name not in ('__getitem__', '__init__'))
+
+    def __getattr__(self, name):
+        if self._should_ignore_attribute(name):
+            raise AttributeError(name)
+
+        if name not in self._children:
+            self._children[name] = self._create_child(name)
+
+        return self._children[name]
+
+    def __getitem__(self, index):
+        child_name = '[%s]' % index
+        return_value = self._children.setdefault(
+            child_name, self._create_child('[%s]' % index))
+        self._log_call('__getitem__', (index,), {}, return_value)
+        return return_value
+
+    def __setitem__(self, index, value):
+        child_name = '[%s]' % index
+        self._log_call('__setitem__', (index, value), {}, None)
+        self._children[child_name] = value
+
+    def _create_operator(name):
+        def operator_fn(self, other):
+            return other
+        operator_fn.__name__ = name
+        return operator_fn
+
+    def _operators():
+        operator_names = ['add', 'and', 'div', 'lshift', 'mod', 'mul', 'or',
+                          'pow', 'rshift', 'sub', 'xor']
+        reverse_operator_names = ['r%s' % name for name in operator_names]
+        for operator_name in operator_names + reverse_operator_names:
+            operator_fn_name = '__%s__' % operator_name
+            yield operator_fn_name
+
+    # Define each operator
+    for operator_fn_name in _operators():
+        exec('%s = _create_operator("%s")' % (operator_fn_name,
+                                              operator_fn_name))
+
+    def __str__(self):
+        return '<Mock %s>' % id(self)
+    __repr__ = __str__
+
+    def __len__(self):
+        return 1
+
+
+def exception_raiser(exception):
+    def raise_exception(*args, **kwargs):
+        raise exception
+    return raise_exception
+
