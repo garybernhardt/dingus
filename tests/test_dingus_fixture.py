@@ -42,7 +42,7 @@ class WhenCallingTeardownFunction(WhenRunningFixtureOnAModule):
     def setup(self):
         super(WhenCallingTeardownFunction, self).setup()
         self.fixture_object = self.fixture_class()
-        self.original_module_dict = self.fixture_object.__dict__.copy()
+        self.original_module_dict = self.module.__dict__.copy()
         self.fixture_object.setup()
         self.fixture_object.teardown()
 
@@ -50,5 +50,5 @@ class WhenCallingTeardownFunction(WhenRunningFixtureOnAModule):
         assert self.module.value is 'value'
 
     def should_leave_globals_as_they_were_before_fixture(self):
-        assert self.fixture_object.__dict__ == self.original_module_dict
+        assert self.module.__dict__ == self.original_module_dict
 
