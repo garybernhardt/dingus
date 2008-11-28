@@ -8,33 +8,33 @@ import new
 import re
 
 
-def ModuleMocker(class_under_test):
+def DingusFixture(class_under_test):
     module_name = class_under_test.__module__
     module = sys.modules[module_name]
 
     def setup(self):
         exclusions = {class_under_test.__name__: class_under_test}
-        mock_module(module, **exclusions)
+        replace_module_globals(module, **exclusions)
 
     def teardown(self):
         restore_module(module)
 
-    mock_fixture_class = new.classobj('%sMock' % module_name,
-                                      (object,),
-                                      {})
-    mock_fixture_class.setup = setup
-    mock_fixture_class.teardown = teardown
-    return mock_fixture_class
+    fixture_class = new.classobj('%sDingusFixture' % module_name,
+                                 (object,),
+                                 {})
+    fixture_class.setup = setup
+    fixture_class.teardown = teardown
+    return fixture_class
 
 
 def wipe_module(module):
     old_module_dict = module.__dict__.copy()
     module.__dict__.clear()
     module.__dict__.update(__builtins__)
-    module.__dict__['__mocked_dict__'] = old_module_dict
+    module.__dict__['__dingused_dict__'] = old_module_dict
 
 
-def mock_module(module, **manual_globals):
+def replace_module_globals(module, **manual_globals):
     module_keys = set(module.__dict__.iterkeys())
     builtin_keys = set(__builtins__.iterkeys())
     manual_keys = set(manual_globals.iterkeys())
@@ -42,15 +42,15 @@ def mock_module(module, **manual_globals):
     assert module_keys.issuperset(manual_globals)
     assert not builtin_keys.intersection(manual_globals)
 
-    mocked_keys = module_keys - builtin_keys - manual_keys
+    replaced_keys = module_keys - builtin_keys - manual_keys
     wipe_module(module)
-    for key in mocked_keys:
+    for key in replaced_keys:
         module.__dict__[key] = Dingus()
     module.__dict__.update(manual_globals)
 
 
 def restore_module(module):
-    old_module_dict = module.__dict__['__mocked_dict__']
+    old_module_dict = module.__dict__['__dingused_dict__']
     module.__dict__.clear()
     module.__dict__.update(old_module_dict)
 

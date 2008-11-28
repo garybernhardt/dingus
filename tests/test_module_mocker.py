@@ -1,10 +1,10 @@
 import sys
 import new
 
-from dingus import ModuleMocker, Dingus
+from dingus import DingusFixture, Dingus
 
 
-class WhenMockingAModule(object):
+class WhenRunningFixtureOnAModule(object):
     def setup(self):
         self.module = self._create_fake_module()
         self.class_under_test = self._create_class_under_test()
@@ -24,7 +24,7 @@ class WhenMockingAModule(object):
         return ClassThatWouldBeUnderTest
 
     def _create_mocking_class(self):
-        class MockingClass(ModuleMocker(self.class_under_test)):
+        class MockingClass(DingusFixture(self.class_under_test)):
             pass
         return MockingClass
 
@@ -32,13 +32,13 @@ class WhenMockingAModule(object):
         del sys.modules[self.module.__name__]
 
 
-class WhenCallingSetupFunction(WhenMockingAModule):
+class WhenCallingSetupFunction(WhenRunningFixtureOnAModule):
     def should_mock_module_attributes(self):
         self.mocking_class().setup()
         assert isinstance(self.module.value, Dingus)
 
 
-class WhenCallingTeardownFunction(WhenMockingAModule):
+class WhenCallingTeardownFunction(WhenRunningFixtureOnAModule):
     def setup(self):
         super(WhenCallingTeardownFunction, self).setup()
         self.mocking_object = self.mocking_class()
