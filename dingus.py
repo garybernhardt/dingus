@@ -1,5 +1,6 @@
-# This mock library was written by Michael Foord, is licensed under the BSD
-# license, and is available at http://www.voidspace.org.uk/python/mock.html.
+# This library was written by Gary Bernhardt and is licensed under the BSD
+# license. It grew out of an old version of the mock library by Michael Foord
+# available at http://www.voidspace.org.uk/python/mock.html.
 
 
 import sys
