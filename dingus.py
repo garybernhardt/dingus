@@ -44,7 +44,7 @@ def mock_module(module, **manual_globals):
     mocked_keys = module_keys - builtin_keys - manual_keys
     wipe_module(module)
     for key in mocked_keys:
-        module.__dict__[key] = Mock()
+        module.__dict__[key] = Dingus()
     module.__dict__.update(manual_globals)
 
 
@@ -100,7 +100,7 @@ class CallList(list):
                          and (kwargs is NoArgument or kwargs == call.kwargs)])
 
 
-class Mock(object):
+class Dingus(object):
     def __init__(self, **kwargs):
         self._parent, self._name = None, None
         self.reset()
@@ -114,14 +114,14 @@ class Mock(object):
     def many(cls, count):
         return tuple(cls() for _ in range(count))
 
-    def _mocked_init(self, *args, **kwargs):
+    def _fake_init(self, *args, **kwargs):
         return self.__getattr__('__init__')(*args, **kwargs)
 
     def _replace_init_method(self):
-        self.__init__ = self._mocked_init
+        self.__init__ = self._fake_init
 
     def _create_child(self, name):
-        child = Mock()
+        child = Dingus()
         child._name = name
         child._parent = self
         return child
@@ -212,7 +212,7 @@ class Mock(object):
                                               operator_fn_name))
 
     def __str__(self):
-        return '<Mock %s>' % id(self)
+        return '<Dingus %s>' % id(self)
     __repr__ = __str__
 
     def __len__(self):

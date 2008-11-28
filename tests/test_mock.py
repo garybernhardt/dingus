@@ -3,20 +3,20 @@ from functools import partial
 
 from nose.tools import assert_raises
 
-from dingus import Mock
+from dingus import Dingus
 
 
-class WhenCreatingNewMock:
+class WhenCreatingNewDingus:
     def setup(self):
-        self.mock = Mock()
+        self.mock = Dingus()
 
     def should_not_have_any_recorded_calls(self):
         assert not self.mock.calls()
 
 
-class WhenCallingMockAsFunction:
+class WhenCallingDingusAsFunction:
     def setup(self):
-        self.mock = Mock()
+        self.mock = Dingus()
         self.mock('arg', kwarg=None)
 
     def should_record_call(self):
@@ -34,7 +34,7 @@ class WhenCallingMockAsFunction:
 
 class WhenCallingAttributeChild:
     def setup(self):
-        self.parent = Mock()
+        self.parent = Dingus()
         self.child = self.parent.child
         self.child('arg', kwarg=None)
 
@@ -53,7 +53,7 @@ class WhenCallingAttributeChild:
 
 class WhenCallingAttributeGrandchild:
     def setup(self):
-        self.grandparent = Mock()
+        self.grandparent = Dingus()
         self.parent = self.grandparent.parent
         self.child = self.parent.child
         self.child('arg', kwarg=None)
@@ -64,7 +64,7 @@ class WhenCallingAttributeGrandchild:
 
 class WhenCallingAttributesOfReturnedValues:
     def setup(self):
-        self.grandparent = Mock()
+        self.grandparent = Dingus()
         self.parent = self.grandparent()
         self.child = self.parent.child
         self.child('arg', kwarg=None)
@@ -81,21 +81,21 @@ class WhenCallingAttributesOfReturnedValues:
 
 class WhenCallingItemChild:
     def should_record_call(self):
-        parent = Mock()
+        parent = Dingus()
         parent['child']()
         assert parent.calls('^\[child\]$').one()
 
 
 class WhenCallingItemGrandchild:
     def should_record_call_on_grandparent(self):
-        grandparent = Mock()
+        grandparent = Dingus()
         grandparent['parent']['child']()
         assert grandparent.calls('^\[parent\]\[child\]$')
 
 
-class WhenCallingListItemOfMock:
+class WhenCallingListItemOfDingus:
     def setup(self):
-        self.parent = Mock()
+        self.parent = Dingus()
         self.child = self.parent[0]
         self.child()
 
@@ -108,7 +108,7 @@ class WhenCallingListItemOfMock:
 
 class WhenAccessingMagicAttributes:
     def should_raise_attribute_error(self):
-        assert_raises(AttributeError, lambda: Mock().__foo__)
+        assert_raises(AttributeError, lambda: Dingus().__foo__)
 
 
 class WhenApplyingBinaryOperators:
@@ -117,9 +117,9 @@ class WhenApplyingBinaryOperators:
 
     def assert_returns_other(self, location_of_mock, op):
         if location_of_mock == 'left':
-            assert op(Mock(), 5) is 5
+            assert op(Dingus(), 5) is 5
         else:
-            assert op(5, Mock()) is 5
+            assert op(5, Dingus()) is 5
 
     def should_always_return_other(self):
         for operator_name in self.operator_names:
@@ -130,12 +130,12 @@ class WhenApplyingBinaryOperators:
 
 class WhenComputingLength:
     def should_be_one(self):
-        assert len(Mock()) == 1
+        assert len(Dingus()) == 1
 
 
 class WhenAccessingReturnValueBeforeCalling:
     def setup(self):
-        self.mock = Mock()
+        self.mock = Dingus()
 
     def should_have_return_value_before_calling(self):
         assert self.mock.return_value
@@ -153,7 +153,7 @@ class WhenAccessingReturnValueBeforeCalling:
 
 class WhenSettingReturnValue:
     def setup(self):
-        self.mock = Mock()
+        self.mock = Dingus()
         self.return_value = 5
         self.mock.return_value = self.return_value
 
@@ -167,8 +167,8 @@ class WhenSettingReturnValue:
 
 class WhenSettingAttributes:
     def setup(self):
-        self.mock = Mock()
-        self.attr = Mock()
+        self.mock = Dingus()
+        self.attr = Dingus()
         self.mock.attr = self.attr
 
     def should_remember_attr(self):
@@ -183,12 +183,12 @@ class WhenSettingAttributes:
 
 class WhenAccessingItems:
     def should_log_access(self):
-        mock = Mock()
+        mock = Dingus()
         mock['item']
         assert mock.calls('__getitem__', ('item',)).one()
 
     def should_log_access_after_initial_item_read(self):
-        mock = Mock()
+        mock = Dingus()
         for _ in range(2):
             mock['item']
         assert len(mock.calls('__getitem__', ('item',))) == 2
@@ -196,8 +196,8 @@ class WhenAccessingItems:
 
 class WhenSettingItems:
     def setup(self):
-        self.mock = Mock()
-        self.item = Mock()
+        self.mock = Dingus()
+        self.item = Dingus()
         self.mock['item'] = self.item
 
     def should_remember_item(self):
@@ -216,17 +216,17 @@ class WhenSettingItems:
 class WhenNothingIsSet:
     def setup(self):
         self.attribute_name = 'attr'
-        self.mock = Mock()
+        self.mock = Dingus()
 
     def should_be_able_to_access_attributes_that_dont_exist(self):
-        assert isinstance(getattr(self.mock, self.attribute_name), Mock)
+        assert isinstance(getattr(self.mock, self.attribute_name), Dingus)
 
     def should_get_same_attribute_on_every_access(self):
         get_attr = lambda: getattr(self.mock, self.attribute_name)
         assert get_attr() is get_attr()
 
     def should_be_able_to_acces_items_that_dont_exist(self):
-        assert isinstance(self.mock[self.attribute_name], Mock)
+        assert isinstance(self.mock[self.attribute_name], Dingus)
 
     def should_get_same_item_on_every_access(self):
         get_item = lambda: self.mock[self.attribute_name]
@@ -238,31 +238,31 @@ class WhenNothingIsSet:
 
 class WhenSpecifyingAttributesViaKeywordArguments:
     def should_set_specified_attributes(self):
-        attr = Mock()
-        object_with_attr = Mock(attr=attr)
+        attr = Dingus()
+        object_with_attr = Dingus(attr=attr)
         assert object_with_attr.attr is attr
 
 
 class WhenCallingInitMethod:
     def should_record_call(self):
-        mock = Mock()
+        mock = Dingus()
         mock.__init__()
         assert mock.calls('__init__').one()
 
 
-class WhenCreatingMultipleMocks:
+class WhenCreatingMultipleDinguses:
     def should_return_a_mock_when_asked_for_one(self):
-        assert len(Mock.many(1)) == 1
+        assert len(Dingus.many(1)) == 1
 
     def should_return_two_mocks_when_asked_for_two(self):
-        assert len(Mock.many(2)) == 2
+        assert len(Dingus.many(2)) == 2
 
     def should_return_mock_instances_when_asked_for_multiple(self):
-        assert all(isinstance(mock, Mock) for mock in Mock.many(2))
+        assert all(isinstance(mock, Dingus) for mock in Dingus.many(2))
 
     def should_return_mocks_in_tuple(self):
-        assert isinstance(Mock.many(2), tuple)
+        assert isinstance(Dingus.many(2), tuple)
 
     def should_return_nothing_when_asked_for_zero_mocks(self):
-        assert not Mock.many(0)
+        assert not Dingus.many(0)
 

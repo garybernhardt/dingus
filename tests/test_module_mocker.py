@@ -1,7 +1,7 @@
 import sys
 import new
 
-from dingus import ModuleMocker, Mock
+from dingus import ModuleMocker, Dingus
 
 
 class WhenMockingAModule(object):
@@ -35,7 +35,7 @@ class WhenMockingAModule(object):
 class WhenCallingSetupFunction(WhenMockingAModule):
     def should_mock_module_attributes(self):
         self.mocking_class().setup()
-        assert isinstance(self.module.value, Mock)
+        assert isinstance(self.module.value, Dingus)
 
 
 class WhenCallingTeardownFunction(WhenMockingAModule):
