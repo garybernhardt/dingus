@@ -8,50 +8,47 @@ import new
 
 
 def DingusFixture(class_under_test):
-    module_name = class_under_test.__module__
-    module = sys.modules[module_name]
+    class Fixture(object):
+        def setup(self):
+            module_name = class_under_test.__module__
+            self._dingus_module = sys.modules[module_name]
+            exclusions = {class_under_test.__name__: class_under_test}
+            self._dingus_replace_module_globals(self._dingus_module,
+                                                **exclusions)
 
-    def setup(self):
-        exclusions = {class_under_test.__name__: class_under_test}
-        replace_module_globals(module, **exclusions)
+        def teardown(self):
+            self._dingus_restore_module(self._dingus_module)
 
-    def teardown(self):
-        restore_module(module)
-
-    fixture_class = new.classobj('%sDingusFixture' % module_name,
-                                 (object,),
-                                 {})
-    fixture_class.setup = setup
-    fixture_class.teardown = teardown
-    return fixture_class
-
-
-def wipe_module(module):
-    old_module_dict = module.__dict__.copy()
-    module.__dict__.clear()
-    module.__dict__.update(__builtins__)
-    module.__dict__['__dingused_dict__'] = old_module_dict
+        def _dingus_wipe_module(self, module):
+            old_module_dict = module.__dict__.copy()
+            module.__dict__.clear()
+            module.__dict__.update(__builtins__)
+            module.__dict__['__dingused_dict__'] = old_module_dict
 
 
-def replace_module_globals(module, **manual_globals):
-    module_keys = set(module.__dict__.iterkeys())
-    builtin_keys = set(__builtins__.iterkeys())
-    manual_keys = set(manual_globals.iterkeys())
+        def _dingus_replace_module_globals(self, module, **manual_globals):
+            module_keys = set(module.__dict__.iterkeys())
+            builtin_keys = set(__builtins__.iterkeys())
+            manual_keys = set(manual_globals.iterkeys())
 
-    assert module_keys.issuperset(manual_globals)
-    assert not builtin_keys.intersection(manual_globals)
+            assert module_keys.issuperset(manual_globals)
+            assert not builtin_keys.intersection(manual_globals)
 
-    replaced_keys = module_keys - builtin_keys - manual_keys
-    wipe_module(module)
-    for key in replaced_keys:
-        module.__dict__[key] = Dingus()
-    module.__dict__.update(manual_globals)
+            replaced_keys = module_keys - builtin_keys - manual_keys
+            self._dingus_wipe_module(module)
+            for key in replaced_keys:
+                module.__dict__[key] = Dingus()
+            module.__dict__.update(manual_globals)
+
+        def _dingus_restore_module(self, module):
+            old_module_dict = module.__dict__['__dingused_dict__']
+            module.__dict__.clear()
+            module.__dict__.update(old_module_dict)
 
 
-def restore_module(module):
-    old_module_dict = module.__dict__['__dingused_dict__']
-    module.__dict__.clear()
-    module.__dict__.update(old_module_dict)
+    Fixture.__name__ = '%sDingusFixture' % class_under_test.__module__
+    return Fixture
+
 
 
 # These sentinels are used for argument defaults because the user might want
