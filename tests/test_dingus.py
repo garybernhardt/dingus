@@ -107,8 +107,10 @@ class WhenCallingListItemOfDingus:
 
 
 class WhenAccessingMagicAttributes:
-    def should_raise_attribute_error(self):
-        assert_raises(AttributeError, lambda: Dingus().__foo__)
+    def should_raise_attribute_error_for_pyobjc_object(self):
+        # PyObjC uses __pyobjc_object__ to get an ObjC object from a Python
+        # object. Returning a Mock will cause a crash.
+        assert_raises(AttributeError, lambda: Dingus().__pyobjc_object__)
 
 
 class WhenApplyingBinaryOperators:

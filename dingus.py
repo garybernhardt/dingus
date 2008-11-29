@@ -161,9 +161,7 @@ class Dingus(object):
         self.calls.append(Call(name, args, kwargs, return_value))
 
     def _should_ignore_attribute(self, name):
-        return (name.startswith('__')
-                and name.endswith('__')
-                and name not in ('__getitem__', '__init__'))
+        return name == '__pyobjc_object__'
 
     def __getattr__(self, name):
         if self._should_ignore_attribute(name):
