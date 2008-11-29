@@ -61,6 +61,9 @@ class WhenCallingAttributeGrandchild:
     def should_record_call_on_grandparent(self):
         assert self.grandparent.calls('parent.child').one()
 
+    def should_record_call_on_parent(self):
+        assert self.parent.calls('child').one()
+
 
 class WhenCallingAttributesOfReturnedValues:
     def setup(self):
@@ -73,7 +76,10 @@ class WhenCallingAttributesOfReturnedValues:
         assert self.grandparent.calls('()').one()
 
     def should_record_child_call_on_child(self):
-        assert self.child.calls().one()
+        assert self.child.calls('()').one()
+
+    def should_record_child_call_on_parent(self):
+        assert self.parent.calls('child').one()
 
     def should_record_child_call_on_grandparent(self):
         assert self.grandparent.calls('().child').one()
