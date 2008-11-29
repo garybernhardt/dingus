@@ -12,9 +12,8 @@ def DingusFixture(class_under_test):
         def setup(self):
             module_name = class_under_test.__module__
             self._dingus_module = sys.modules[module_name]
-            exclusions = {class_under_test.__name__: class_under_test}
             self._dingus_replace_module_globals(self._dingus_module,
-                                                **exclusions)
+                                                class_under_test)
 
         def teardown(self):
             self._dingus_restore_module(self._dingus_module)
@@ -26,19 +25,18 @@ def DingusFixture(class_under_test):
             module.__dict__['__dingused_dict__'] = old_module_dict
 
 
-        def _dingus_replace_module_globals(self, module, **manual_globals):
+        def _dingus_replace_module_globals(self, module, class_under_test):
             module_keys = set(module.__dict__.iterkeys())
             builtin_keys = set(__builtins__.iterkeys())
-            manual_keys = set(manual_globals.iterkeys())
 
-            assert module_keys.issuperset(manual_globals)
-            assert not builtin_keys.intersection(manual_globals)
-
-            replaced_keys = module_keys - builtin_keys - manual_keys
+            test_class_name = class_under_test.__name__
+            replaced_keys = (module_keys -
+                             builtin_keys -
+                             set([test_class_name]))
             self._dingus_wipe_module(module)
             for key in replaced_keys:
                 module.__dict__[key] = Dingus()
-            module.__dict__.update(manual_globals)
+            module.__dict__[test_class_name] = class_under_test
 
         def _dingus_restore_module(self, module):
             old_module_dict = module.__dict__['__dingused_dict__']

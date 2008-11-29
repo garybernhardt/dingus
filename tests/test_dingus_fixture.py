@@ -33,9 +33,20 @@ class WhenRunningFixtureOnAModule(object):
 
 
 class WhenCallingSetupFunction(WhenRunningFixtureOnAModule):
+    def setup(self):
+        super(WhenCallingSetupFunction, self).setup()
+        self.fixture_instance = self.fixture_class()
+        self.fixture_instance.setup()
+
+    def teardown(self):
+        self.fixture_instance.teardown()
+        super(WhenCallingSetupFunction, self).teardown()
+
     def should_replace_module_attributes(self):
-        self.fixture_class().setup()
         assert isinstance(self.module.value, Dingus)
+
+    def should_leave_class_under_test_intact(self):
+        assert self.module.ClassThatWouldBeUnderTest is self.class_under_test
 
 
 class WhenCallingTeardownFunction(WhenRunningFixtureOnAModule):
