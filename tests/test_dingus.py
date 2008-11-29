@@ -70,27 +70,27 @@ class WhenCallingAttributesOfReturnedValues:
         self.child('arg', kwarg=None)
 
     def should_record_call_on_grandparent(self):
-        assert self.grandparent.calls('^\(\)$').one()
+        assert self.grandparent.calls('()').one()
 
     def should_record_child_call_on_child(self):
         assert self.child.calls().one()
 
     def should_record_child_call_on_grandparent(self):
-        assert self.grandparent.calls('\(\).child').one()
+        assert self.grandparent.calls('().child').one()
 
 
 class WhenCallingItemChild:
     def should_record_call(self):
         parent = Dingus()
         parent['child']()
-        assert parent.calls('^\[child\]$').one()
+        assert parent.calls('[child]').one()
 
 
 class WhenCallingItemGrandchild:
     def should_record_call_on_grandparent(self):
         grandparent = Dingus()
         grandparent['parent']['child']()
-        assert grandparent.calls('^\[parent\]\[child\]$')
+        assert grandparent.calls('[parent][child]')
 
 
 class WhenCallingListItemOfDingus:
@@ -103,7 +103,7 @@ class WhenCallingListItemOfDingus:
         assert self.parent.calls('[0]').one()
 
     def should_record_call_on_child(self):
-        assert self.child.calls('\(\)').one()
+        assert self.child.calls('()').one()
 
 
 class WhenAccessingMagicAttributes:

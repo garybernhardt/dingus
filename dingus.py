@@ -5,7 +5,6 @@
 
 import sys
 import new
-import re
 
 
 def DingusFixture(class_under_test):
@@ -94,9 +93,8 @@ class CallList(list):
         return self[0]
 
     def __call__(self, name=NoArgument, args=NoArgument, kwargs=NoArgument):
-        name_re = None if name is NoArgument else re.compile(name)
         return CallList([call for call in self
-                         if (name is NoArgument or name_re.search(call.name))
+                         if (name is NoArgument or name == call.name)
                          and self._match_args(call, args)
                          and (kwargs is NoArgument or kwargs == call.kwargs)])
 
