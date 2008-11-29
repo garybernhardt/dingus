@@ -80,7 +80,7 @@ class Call(tuple):
 class CallList(list):
     @staticmethod
     def _match_args(call, args):
-        if args is NoArgument:
+        if not args:
             return True
         elif len(args) != len(call.args):
             return False
@@ -92,11 +92,11 @@ class CallList(list):
         assert len(self) == 1
         return self[0]
 
-    def __call__(self, name=NoArgument, args=NoArgument, kwargs=NoArgument):
+    def __call__(self, name=NoArgument, *args, **kwargs):
         return CallList([call for call in self
                          if (name is NoArgument or name == call.name)
                          and self._match_args(call, args)
-                         and (kwargs is NoArgument or kwargs == call.kwargs)])
+                         and (not kwargs or kwargs == call.kwargs)])
 
 
 class Dingus(object):

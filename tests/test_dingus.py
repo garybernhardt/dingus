@@ -185,13 +185,13 @@ class WhenAccessingItems:
     def should_log_access(self):
         dingus = Dingus()
         dingus['item']
-        assert dingus.calls('__getitem__', ('item',)).one()
+        assert dingus.calls('__getitem__', 'item').one()
 
     def should_log_access_after_initial_item_read(self):
         dingus = Dingus()
         for _ in range(2):
             dingus['item']
-        assert len(dingus.calls('__getitem__', ('item',))) == 2
+        assert len(dingus.calls('__getitem__', 'item')) == 2
 
 
 class WhenSettingItems:
@@ -204,7 +204,7 @@ class WhenSettingItems:
         assert self.dingus['item'] is self.item
 
     def should_log_access(self):
-        assert self.dingus.calls('__setitem__', ('item', self.item)).one()
+        assert self.dingus.calls('__setitem__', 'item', self.item).one()
 
     def should_not_return_items_as_attributes(self):
         assert self.dingus.item is not self.item

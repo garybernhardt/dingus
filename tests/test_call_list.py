@@ -29,29 +29,43 @@ class WhenPopulatedWithACall:
         assert self.calls.one()
 
     def should_not_return_call_when_querying_for_wrong_name(self):
-        assert not self.calls(name='wrong name')
+        assert not self.calls('wrong name')
 
     def should_not_return_call_when_querying_for_wrong_args(self):
-        assert not self.calls(args='wrong args')
+        assert not self.calls('test name', 'wrong args')
 
     def should_not_return_call_when_querying_for_wrong_kwargs(self):
-        assert not self.calls(kwargs=dict(wrong_key='wrong_value'))
+        assert not self.calls('test name', wrong_key='wrong_value')
 
 
 class WhenPopulatedWithTwoCalls:
     def setup(self):
         self.calls = CallList()
-        self.calls.append(Call('name1', ('arg1',), {'kwarg1': 1}, 'return 1'))
-        self.calls.append(Call('name2', ('arg2',), {'kwarg2': 2}, 'return 2'))
+        for _ in range(2):
+            self.calls.append(Call('name', (), {}, None))
 
     def should_not_have_one_element(self):
         assert_raises(AssertionError, self.calls.one)
 
+
+class WhenTwoCallsDifferByName:
+    def setup(self):
+        self.calls = CallList()
+        self.calls.append(Call('name1', (), {}, None))
+        self.calls.append(Call('name2', (), {}, None))
+
     def should_filter_on_name(self):
         assert self.calls('name1').one()
 
+
+class WhenTwoCallsDifferByArgs:
+    def setup(self):
+        self.calls = CallList()
+        self.calls.append(Call('name', ('arg1',), {}, None))
+        self.calls.append(Call('name', ('arg2',), {}, None))
+
     def should_filter_on_args(self):
-        assert self.calls(args=('arg1',)).one()
+        assert self.calls('name', 'arg1').one()
 
 
 class WhenCallsDifferInAllWays:
@@ -68,10 +82,10 @@ class WhenCallsDifferInAllWays:
         assert len(self.calls('name1')) == self.call_count / 2
 
     def should_filter_on_args(self):
-        assert len(self.calls(args=('arg1',))) == self.call_count / 2
+        assert len(self.calls('name1', 'arg1')) == self.call_count / 4
 
     def should_filter_on_kwargs(self):
-        assert len(self.calls(kwargs={'kwarg1': 1})) == self.call_count / 2
+        assert len(self.calls('name1', kwarg1=1)) == self.call_count / 4
 
 
 class WhenCallsHaveMultipleArguments:
@@ -86,14 +100,14 @@ class WhenCallsHaveMultipleArguments:
         self.call_count = len(self.calls)
 
     def should_be_able_to_ignore_all_arguments(self):
-        assert len(self.calls(args=(DontCare, DontCare))) == self.call_count
+        assert len(self.calls('name', DontCare, DontCare)) == self.call_count
 
     def should_be_able_to_ignore_first_argument(self):
-        assert len(self.calls(args=(1, DontCare))) == self.call_count / 2
+        assert len(self.calls('name', 1, DontCare)) == self.call_count / 2
 
     def should_be_able_to_ignore_second_argument(self):
-        assert len(self.calls(args=(DontCare, 1))) == self.call_count / 2
+        assert len(self.calls('name', DontCare, 1)) == self.call_count / 2
 
     def should_be_able_to_specify_both_arguments(self):
-        assert len(self.calls(args=(1, 1))) == self.call_count / 4
+        assert len(self.calls('name', 1, 1)) == self.call_count / 4
 
