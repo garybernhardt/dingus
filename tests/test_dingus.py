@@ -123,17 +123,15 @@ class WhenApplyingBinaryOperators:
     operator_names = ['add', 'and_', 'div', 'lshift', 'mod', 'mul', 'or_',
                       'pow', 'rshift', 'sub', 'xor']
 
-    def assert_returns_other(self, location_of_dingus, op):
-        if location_of_dingus == 'left':
-            assert op(Dingus(), 5) is 5
-        else:
-            assert op(5, Dingus()) is 5
+    def assert_returns_new_dingus(self, op):
+        left, right = Dingus.many(2)
+        result = op(left, right)
+        assert result is not left and result is not right
 
-    def should_always_return_other(self):
+    def should_always_return_new_dingus(self):
         for operator_name in self.operator_names:
             op = getattr(operator, operator_name)
-            for dingus_argument_location in ('left', 'right'):
-                yield self.assert_returns_other, dingus_argument_location, op
+            yield self.assert_returns_new_dingus, op
 
 
 class WhenComputingLength:

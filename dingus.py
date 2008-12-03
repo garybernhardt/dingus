@@ -186,7 +186,9 @@ class Dingus(object):
 
     def _create_operator(name):
         def operator_fn(self, other):
-            return other
+            if name not in self._children:
+                self._children[name] = self._create_child(name)
+            return self._children[name]
         operator_fn.__name__ = name
         return operator_fn
 
