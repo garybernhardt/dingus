@@ -13,6 +13,9 @@ class WhenCreatingNewDingus:
     def should_not_have_any_recorded_calls(self):
         assert not self.dingus.calls()
 
+    def should_have_a_name(self):
+        assert self.dingus.__name__ == 'dingus_%i' % id(self.dingus)
+
 
 class WhenCallingDingusAsFunction:
     def setup(self):

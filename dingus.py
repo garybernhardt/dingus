@@ -98,6 +98,7 @@ class Dingus(object):
     def __init__(self, **kwargs):
         self._parent, self._name = None, None
         self.reset()
+        self.__name__ = 'dingus_%i' % id(self)
 
         for attr_name, attr_value in kwargs.iteritems():
             setattr(self, attr_name, attr_value)
