@@ -7,8 +7,8 @@ import sys
 import new
 
 
-def DingusFixture(class_under_test):
-    class Fixture(object):
+def DingusTestCase(class_under_test):
+    class TestCase(object):
         def setup(self):
             module_name = class_under_test.__module__
             self._dingus_module = sys.modules[module_name]
@@ -44,8 +44,8 @@ def DingusFixture(class_under_test):
             module.__dict__.update(old_module_dict)
 
 
-    Fixture.__name__ = '%sDingusFixture' % class_under_test.__module__
-    return Fixture
+    TestCase.__name__ = '%sDingusTestCase' % class_under_test.__module__
+    return TestCase
 
 
 

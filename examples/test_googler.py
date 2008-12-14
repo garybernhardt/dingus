@@ -1,9 +1,9 @@
-from dingus import Dingus, DingusFixture, DontCare
+from dingus import Dingus, DingusTestCase, DontCare
 import googler
 from googler import Googler
 
 
-class WhenCreatingRequest(DingusFixture(Googler)):
+class WhenCreatingRequest(DingusTestCase(Googler)):
     def setup(self):
         super(WhenCreatingRequest, self).setup()
         self.query_term = 'query term'
@@ -14,7 +14,7 @@ class WhenCreatingRequest(DingusFixture(Googler)):
         assert googler.urllib2.calls('Request', query_url)
 
 
-class WhenCreatingRequestWithTwoTerms(DingusFixture(Googler)):
+class WhenCreatingRequestWithTwoTerms(DingusTestCase(Googler)):
     def setup(self):
         super(WhenCreatingRequestWithTwoTerms, self).setup()
         self.terms = ['term1', 'term2']
@@ -26,7 +26,7 @@ class WhenCreatingRequestWithTwoTerms(DingusFixture(Googler)):
         assert googler.urllib2.calls('Request', query_url)
 
 
-class WhenSendingRequest(DingusFixture(Googler)):
+class WhenSendingRequest(DingusTestCase(Googler)):
     def setup(self):
         super(WhenSendingRequest, self).setup()
         self.request = googler.urllib2.Request.return_value
@@ -42,7 +42,7 @@ class WhenSendingRequest(DingusFixture(Googler)):
         assert 'Mozilla' in call.args[1]
 
 
-class WhenConnected(DingusFixture(Googler)):
+class WhenConnected(DingusTestCase(Googler)):
     def setup(self):
         super(WhenConnected, self).setup()
         self.connection = googler.urllib2.urlopen.return_value
