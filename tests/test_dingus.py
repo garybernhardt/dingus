@@ -17,6 +17,26 @@ class WhenCreatingNewDingus:
         assert self.dingus.__name__ == 'dingus_%i' % id(self.dingus)
 
 
+class WhenCreatingNewDingusWithAName:
+    def setup(self):
+        self.dingus = Dingus('something')
+
+    def should_have_a_name(self):
+        assert self.dingus.__name__ == 'something'
+
+    def should_include_name_in_repr(self):
+        assert repr(self.dingus) == '<Dingus something>'
+
+    def should_include_attribute_name_in_children(self):
+        assert self.dingus.child.__name__ == 'child'
+
+    def should_include_attribute_name_in_children_from_calling(self):
+        assert self.dingus().__name__ == '()'
+
+    def should_include_attribute_name_in_children_from_indexing(self):
+        assert self.dingus()['5'].__name__ == '[5]'
+
+
 class WhenCallingDingusAsFunction:
     def setup(self):
         self.dingus = Dingus()

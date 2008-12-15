@@ -95,10 +95,10 @@ class CallList(list):
 
 
 class Dingus(object):
-    def __init__(self, **kwargs):
+    def __init__(self, name=None, **kwargs):
         self._parent, self._name = None, None
         self.reset()
-        self.__name__ = 'dingus_%i' % id(self)
+        self.__name__ = 'dingus_%i' % id(self) if name is None else name
 
         for attr_name, attr_value in kwargs.iteritems():
             setattr(self, attr_name, attr_value)
@@ -116,7 +116,7 @@ class Dingus(object):
         self.__init__ = self._fake_init
 
     def _create_child(self, name):
-        child = Dingus()
+        child = Dingus(name)
         child._name = name
         child._parent = self
         return child
@@ -207,7 +207,7 @@ class Dingus(object):
                                               operator_fn_name))
 
     def __str__(self):
-        return '<Dingus %s>' % id(self)
+        return '<Dingus %s>' % self.__name__
     __repr__ = __str__
 
     def __len__(self):
