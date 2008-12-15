@@ -95,10 +95,15 @@ class CallList(list):
 
 
 class Dingus(object):
-    def __init__(self, name=None, **kwargs):
+    def __init__(self, name=None, full_name=None, **kwargs):
         self._parent = None
         self.reset()
-        self.__name__ = 'dingus_%i' % id(self) if name is None else name
+        name = 'dingus_%i' % id(self) if name is None else name
+        full_name = name if full_name is None else full_name
+        self._short_name = name
+        self._full_name = full_name
+        self.__name__ = name
+        self._full_name = full_name
 
         for attr_name, attr_value in kwargs.iteritems():
             setattr(self, attr_name, attr_value)
@@ -116,7 +121,10 @@ class Dingus(object):
         self.__init__ = self._fake_init
 
     def _create_child(self, name):
-        child = Dingus(name)
+        separator = ('' if (name.startswith('()') or name.startswith('['))
+                     else '.')
+        full_name = self._full_name + separator + name
+        child = Dingus(name, full_name)
         child._parent = self
         return child
 
@@ -141,7 +149,7 @@ class Dingus(object):
 
         self._log_call('()', args, kwargs, self.return_value)
         if self._parent:
-            self._parent._log_call(self.__name__,
+            self._parent._log_call(self._short_name,
                                    args,
                                    kwargs,
                                    self.return_value)
@@ -197,7 +205,7 @@ class Dingus(object):
                                               operator_fn_name))
 
     def __str__(self):
-        return '<Dingus %s>' % self.__name__
+        return '<Dingus %s>' % self._full_name
     __repr__ = __str__
 
     def __len__(self):

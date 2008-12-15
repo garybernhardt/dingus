@@ -27,14 +27,14 @@ class WhenCreatingNewDingusWithAName:
     def should_include_name_in_repr(self):
         assert repr(self.dingus) == '<Dingus something>'
 
-    def should_include_attribute_name_in_children(self):
-        assert self.dingus.child.__name__ == 'child'
+    def should_include_attribute_name_in_childrens_repr(self):
+        assert repr(self.dingus.child) == '<Dingus something.child>'
 
-    def should_include_attribute_name_in_children_from_calling(self):
-        assert self.dingus().__name__ == '()'
+    def should_include_attribute_name_in_repr_of_children_from_calling(self):
+        assert repr(self.dingus()) == '<Dingus something()>'
 
-    def should_include_attribute_name_in_children_from_indexing(self):
-        assert self.dingus()['5'].__name__ == '[5]'
+    def should_include_attribute_name_in_repr_of_children_from_indexing(self):
+        assert repr(self.dingus()['5']) == '<Dingus something()[5]>'
 
 
 class WhenCallingDingusAsFunction:
