@@ -13,7 +13,7 @@ dinguses in play.
     >>> d
     <Dingus root>
 
-Accessing any attribute of a dingus will return a new dingus. 
+Accessing any attribute of a dingus will return a new dingus.
 
     >>> d.something
     <Dingus root.something>
@@ -68,4 +68,4 @@ interaction:
     <Dingus root.something.__rpow__[hello]().__div__.__mul__>
 
 (Hopefully your real-world dingus recordings won't look like this!)
- 
+
