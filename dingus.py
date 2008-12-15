@@ -139,26 +139,14 @@ class Dingus(object):
         if self.return_value is NoReturnValue:
             self.return_value = self._create_child('()')
 
-        self._log_call_in_parent(self.__name__,
-                                 args,
-                                 kwargs,
-                                 self.return_value)
         self._log_call('()', args, kwargs, self.return_value)
+        if self._parent:
+            self._parent._log_call(self.__name__,
+                                   args,
+                                   kwargs,
+                                   self.return_value)
 
         return self.return_value
-
-    def _log_call_in_parent(self, name, args, kwargs, return_value):
-        parent = self._parent
-        if parent is None:
-            return
-
-        parent._log_call(name, args, kwargs, return_value)
-
-        if parent.__name__ is not None:
-            separator = ('' if (name.startswith('()') or name.startswith('['))
-                         else '.')
-            name = parent.__name__ + separator + name
-            parent._log_call_in_parent(name, args, kwargs, return_value)
 
     def _log_call(self, name, args, kwargs, return_value):
         self.calls.append(Call(name, args, kwargs, return_value))

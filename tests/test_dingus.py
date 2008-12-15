@@ -81,8 +81,8 @@ class WhenCallingAttributeGrandchild:
         self.child = self.parent.child
         self.child('arg', kwarg=None)
 
-    def should_record_call_on_grandparent(self):
-        assert self.grandparent.calls('parent.child').one()
+    def should_not_record_call_on_grandparent(self):
+        assert not self.grandparent.calls('parent.child')
 
     def should_record_call_on_parent(self):
         assert self.parent.calls('child').one()
@@ -104,8 +104,8 @@ class WhenCallingAttributesOfReturnedValues:
     def should_record_child_call_on_parent(self):
         assert self.parent.calls('child').one()
 
-    def should_record_child_call_on_grandparent(self):
-        assert self.grandparent.calls('().child').one()
+    def should_not_record_child_call_on_grandparent(self):
+        assert not self.grandparent.calls('().child')
 
 
 class WhenCallingItemChild:
@@ -113,13 +113,6 @@ class WhenCallingItemChild:
         parent = Dingus()
         parent['child']()
         assert parent.calls('[child]').one()
-
-
-class WhenCallingItemGrandchild:
-    def should_record_call_on_grandparent(self):
-        grandparent = Dingus()
-        grandparent['parent']['child']()
-        assert grandparent.calls('[parent][child]')
 
 
 class WhenCallingListItemOfDingus:
