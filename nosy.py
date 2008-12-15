@@ -11,7 +11,7 @@ import subprocess
 import re
 
 
-FILE_REGEX = re.compile(r'(py)$')
+FILE_REGEX = re.compile(r'(py|README)$')
 STAT_INTERVAL = .25 # seconds
 CRAWL_INTERVAL = 10 # seconds
 
