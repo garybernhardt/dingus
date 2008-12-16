@@ -8,7 +8,7 @@ A new dingus is created from the Dingus class. You can give dinguses names,
 which helps with debugging your tests, especially when there are multiple
 dinguses in play.
 
-    >>> from dingus import *
+    >>> from dingus import Dingus
     >>> d = Dingus('root')
     >>> d
     <Dingus root>
@@ -55,6 +55,7 @@ You can filter calls by name, arguments, and keyword arguments:
 If you don't care about a particular argument's value, you can use the value
 DontCare when filtering:
 
+    >>> from dingus import DontCare
     >>> pprint(d.calls('()', DontCare))
     [('()', ('argument',), {}, <Dingus root()>),
      ('()', (55,), {}, <Dingus root()>)]
@@ -68,4 +69,8 @@ interaction:
     <Dingus root.something.__rpow__[hello]().__div__.__mul__>
 
 (Hopefully your real-world dingus recordings won't look like this!)
+
+Dingus can also automatically replace a module's globals when running tests.
+This allows you to write fully isolated unit tests. See
+examples/urllib2/test_urllib2.py for an example.
 
