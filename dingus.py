@@ -84,8 +84,10 @@ class CallList(list):
                        for i in range(len(call.args)))
 
     def one(self):
-        assert len(self) == 1
-        return self[0]
+        if len(self) == 1:
+            return self[0]
+        else:
+            return None
 
     def __call__(self, name=NoArgument, *args, **kwargs):
         return CallList([call for call in self

@@ -11,7 +11,7 @@ class WhenEmpty:
         assert not self.calls
 
     def should_not_have_one_element(self):
-        assert_raises(AssertionError, self.calls.one)
+        assert not self.calls.one()
 
 
 class WhenPopulatedWithACall:
@@ -45,7 +45,7 @@ class WhenPopulatedWithTwoCalls:
             self.calls.append(Call('name', (), {}, None))
 
     def should_not_have_one_element(self):
-        assert_raises(AssertionError, self.calls.one)
+        assert not self.calls.one()
 
 
 class WhenTwoCallsDifferByName:
