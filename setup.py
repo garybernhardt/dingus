@@ -7,7 +7,7 @@ setup(name='dingus',
       author_email='gary.bernhardt@gmail.com',
       packages=find_packages(),
       license='MIT',
-      keywords='testing test mocking mock double stub fake'
+      keywords='testing test mocking mock double stub fake',
       classifiers=["Development Status :: 2 - Pre-Alpha",
                    "Intended Audience :: Developers",
                    "License :: OSI Approved :: MIT License",
