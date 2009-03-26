@@ -164,13 +164,18 @@ class Dingus(object):
     def _should_ignore_attribute(self, name):
         return name == '__pyobjc_object__'
 
-    def _existing_or_new_child(self, child_name, default_value=None):
+    def _existing_or_new_child(self, child_name, default_value=NoArgument):
         if child_name not in self._children:
-            value = (self._create_child(child_name) if default_value is None
+            value = (self._create_child(child_name)
+                     if default_value is NoArgument
                      else default_value)
             self._children[child_name] = value
 
         return self._children[child_name]
+
+    def _remove_child_if_exists(self, child_name):
+        if child_name in self._children:
+            del self._children[child_name]
 
     def __getattr__(self, name):
         if self._should_ignore_attribute(name):
@@ -186,6 +191,7 @@ class Dingus(object):
     def __setitem__(self, index, value):
         child_name = '[%s]' % index
         self._log_call('__setitem__', (index, value), {}, None)
+        self._remove_child_if_exists(child_name)
         self._existing_or_new_child(child_name, value)
 
     def _create_operator(name):
@@ -213,6 +219,9 @@ class Dingus(object):
 
     def __len__(self):
         return 1
+
+    def __iter__(self):
+        return iter([self._existing_or_new_child('__iter__')])
 
 
 def exception_raiser(exception):

@@ -155,6 +155,14 @@ class WhenComputingLength:
         assert len(Dingus()) == 1
 
 
+class WhenIterating:
+    def should_return_one_dingus(self):
+        assert len(list(Dingus())) == 1
+
+    def should_return_dinguses(self):
+        assert isinstance(list(Dingus())[0], Dingus)
+
+
 class WhenAccessingReturnValueBeforeCalling:
     def setup(self):
         self.dingus = Dingus()
@@ -224,6 +232,10 @@ class WhenSettingItems:
 
     def should_remember_item(self):
         assert self.dingus['item'] is self.item
+
+    def should_remember_item_even_if_its_value_is_None(self):
+        self.dingus['item'] = None
+        assert self.dingus['item'] is None
 
     def should_log_access(self):
         assert self.dingus.calls('__setitem__', 'item', self.item).one()
