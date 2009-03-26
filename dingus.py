@@ -164,32 +164,33 @@ class Dingus(object):
     def _should_ignore_attribute(self, name):
         return name == '__pyobjc_object__'
 
+    def _existing_or_new_child(self, child_name, default_value=None):
+        if child_name not in self._children:
+            value = (self._create_child(child_name) if default_value is None
+                     else default_value)
+            self._children[child_name] = value
+
+        return self._children[child_name]
+
     def __getattr__(self, name):
         if self._should_ignore_attribute(name):
             raise AttributeError(name)
-
-        if name not in self._children:
-            self._children[name] = self._create_child(name)
-
-        return self._children[name]
+        return self._existing_or_new_child(name)
 
     def __getitem__(self, index):
         child_name = '[%s]' % index
-        return_value = self._children.setdefault(
-            child_name, self._create_child('[%s]' % index))
+        return_value = self._existing_or_new_child(child_name)
         self._log_call('__getitem__', (index,), {}, return_value)
         return return_value
 
     def __setitem__(self, index, value):
         child_name = '[%s]' % index
         self._log_call('__setitem__', (index, value), {}, None)
-        self._children[child_name] = value
+        self._existing_or_new_child(child_name, value)
 
     def _create_operator(name):
         def operator_fn(self, other):
-            if name not in self._children:
-                self._children[name] = self._create_child(name)
-            return self._children[name]
+            return self._existing_or_new_child(name)
         operator_fn.__name__ = name
         return operator_fn
 
