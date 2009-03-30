@@ -81,6 +81,9 @@ class CallList(list):
         else:
             return None
 
+    def once(self):
+        return self.one()
+
     def __call__(self, name=NoArgument, *args, **kwargs):
         return CallList([call for call in self
                          if (name is NoArgument or name == call.name)
