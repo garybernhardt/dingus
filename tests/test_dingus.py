@@ -277,6 +277,13 @@ class WhenSpecifyingAttributesViaKeywordArguments:
         assert object_with_attr.attr is attr
 
 
+class WhenSpecifyingMethodReturnValuesViaKeywordArguments:
+    def should_define_methods_returning_specified_values(self):
+        result = Dingus()
+        object_with_result = Dingus(method__returns=result)
+        assert object_with_result.method() is result
+
+
 class WhenCallingInitMethod:
     def should_record_call(self):
         dingus = Dingus()
