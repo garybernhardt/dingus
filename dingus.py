@@ -100,7 +100,11 @@ class Dingus(object):
         self._full_name = full_name
 
         for attr_name, attr_value in kwargs.iteritems():
-            setattr(self, attr_name, attr_value)
+            if attr_name.endswith('__returns'):
+                attr_name = attr_name.replace('__returns', '')
+                setattr(self, attr_name, lambda *args, **kwargs: attr_value)
+            else:
+                setattr(self, attr_name, attr_value)
 
         self._replace_init_method()
 
