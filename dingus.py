@@ -7,44 +7,36 @@ import sys
 import new
 
 
-def DingusTestCase(class_under_test):
+def DingusTestCase(*objects_under_test):
     class TestCase(object):
         def setup(self):
-            module_name = class_under_test.__module__
+            module_name = objects_under_test[0].__module__
             self._dingus_module = sys.modules[module_name]
-            self._dingus_replace_module_globals(self._dingus_module,
-                                                class_under_test)
+            self._dingus_replace_module_globals(self._dingus_module)
 
         def teardown(self):
             self._dingus_restore_module(self._dingus_module)
 
-        def _dingus_wipe_module(self, module):
+        def _dingus_replace_module_globals(self, module):
             old_module_dict = module.__dict__.copy()
-            module.__dict__.clear()
-            module.__dict__.update(__builtins__)
-            module.__dict__['__dingused_dict__'] = old_module_dict
-
-
-        def _dingus_replace_module_globals(self, module, class_under_test):
             module_keys = set(module.__dict__.iterkeys())
-            builtin_keys = set(__builtins__.iterkeys())
 
-            test_class_name = class_under_test.__name__
             replaced_keys = (module_keys -
-                             builtin_keys -
-                             set([test_class_name]))
-            self._dingus_wipe_module(module)
+                             set(['__builtins__', '__builtin__']) -
+                             set(names_under_test))
             for key in replaced_keys:
                 module.__dict__[key] = Dingus()
-            module.__dict__[test_class_name] = class_under_test
+            module.__dict__['__dingused_dict__'] = old_module_dict
 
         def _dingus_restore_module(self, module):
             old_module_dict = module.__dict__['__dingused_dict__']
             module.__dict__.clear()
             module.__dict__.update(old_module_dict)
 
+    names_under_test = [excluded_object.__name__
+                        for excluded_object in objects_under_test]
 
-    TestCase.__name__ = '%sDingusTestCase' % class_under_test.__module__
+    TestCase.__name__ = '%s_DingusTestCase' % '_'.join(names_under_test)
     return TestCase
 
 
