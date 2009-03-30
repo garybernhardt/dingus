@@ -48,6 +48,9 @@ class WhenCallingDingusAsFunction:
     def should_have_exactly_one_call(self):
         assert self.dingus.calls().one()
 
+    def should_have_once_method_as_alias_for_one_method(self):
+        assert self.dingus.calls().once()
+
     def should_record_args(self):
         assert self.dingus.calls.one().args == ('arg',)
 
