@@ -7,10 +7,16 @@ import sys
 import new
 
 
-def DingusTestCase(*objects_under_test):
+def DingusTestCase(object_under_test, *exclusions):
+    def get_names_under_test():
+        module = sys.modules[object_under_test.__module__]
+        for name, value in module.__dict__.iteritems():
+            if value is object_under_test or name in exclusions:
+                yield name
+
     class TestCase(object):
         def setup(self):
-            module_name = objects_under_test[0].__module__
+            module_name = object_under_test.__module__
             self._dingus_module = sys.modules[module_name]
             self._dingus_replace_module_globals(self._dingus_module)
 
@@ -33,9 +39,7 @@ def DingusTestCase(*objects_under_test):
             module.__dict__.clear()
             module.__dict__.update(old_module_dict)
 
-    names_under_test = [excluded_object.__name__
-                        for excluded_object in objects_under_test]
-
+    names_under_test = list(get_names_under_test())
     TestCase.__name__ = '%s_DingusTestCase' % '_'.join(names_under_test)
     return TestCase
 

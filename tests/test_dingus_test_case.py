@@ -1,9 +1,23 @@
 import sys
 import new
 from tests import test_case_fixture as module
-from tests.test_case_fixture import ClassUnderTest
+from tests.test_case_fixture import ClassUnderTest, Collaborator
 
 from dingus import DingusTestCase, Dingus
+
+
+class WhenObjectIsExcludedFromTest:
+    def setup(self):
+        class TestCase(DingusTestCase(module.ClassUnderTest, 'Collaborator')):
+            pass
+        self.test_case_instance = TestCase()
+        self.test_case_instance.setup()
+
+    def should_not_replace_it_with_dingus(self):
+        assert module.Collaborator is Collaborator
+
+    def teardown(self):
+        self.test_case_instance.teardown()
 
 
 class WhenCallingSetupFunction:
@@ -18,6 +32,9 @@ class WhenCallingSetupFunction:
 
     def should_replace_module_attributes(self):
         assert isinstance(module.atomic_value, Dingus)
+
+    def should_replace_collaborating_classes(self):
+        assert isinstance(module.Collaborator, Dingus)
 
     def should_leave_class_under_test_intact(self):
         assert module.ClassUnderTest is ClassUnderTest
