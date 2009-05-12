@@ -186,13 +186,13 @@ class Dingus(object):
         return self._existing_or_new_child(name)
 
     def __getitem__(self, index):
-        child_name = '[%s]' % index
+        child_name = '[%s]' % (index,)
         return_value = self._existing_or_new_child(child_name)
         self._log_call('__getitem__', (index,), {}, return_value)
         return return_value
 
     def __setitem__(self, index, value):
-        child_name = '[%s]' % index
+        child_name = '[%s]' % (index,)
         self._log_call('__setitem__', (index, value), {}, None)
         self._remove_child_if_exists(child_name)
         self._existing_or_new_child(child_name, value)

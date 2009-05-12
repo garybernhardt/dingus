@@ -226,6 +226,10 @@ class WhenAccessingItems:
             dingus['item']
         assert len(dingus.calls('__getitem__', 'item')) == 2
 
+    def should_accept_tuples_as_item_name(self):
+        dingus = Dingus()
+        assert dingus[('x', 'y')]
+
 
 class WhenSettingItems:
     def setup(self):
@@ -248,6 +252,10 @@ class WhenSettingItems:
 
     def should_return_distinct_dinguses_for_different_items(self):
         assert self.dingus['item'] is not self.dingus['item2']
+    
+    def should_accept_tuples_as_item_name(self):
+        dingus = Dingus()
+        dingus[('x', 'y')] = 'foo'
 
 
 class WhenNothingIsSet:
