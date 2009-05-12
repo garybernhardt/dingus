@@ -256,6 +256,7 @@ class WhenSettingItems:
     def should_accept_tuples_as_item_name(self):
         dingus = Dingus()
         dingus[('x', 'y')] = 'foo'
+        assert dingus[('x', 'y')] == 'foo'
 
 
 class WhenNothingIsSet:
