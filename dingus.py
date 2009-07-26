@@ -149,9 +149,6 @@ class Dingus(object):
     return_value = property(_get_return_value, _set_return_value)
 
     def __call__(self, *args, **kwargs):
-        if self.return_value is NoReturnValue:
-            self.return_value = self._create_child('()')
-
         self._log_call('()', args, kwargs, self.return_value)
         if self._parent:
             self._parent._log_call(self._short_name,
