@@ -1,4 +1,5 @@
 import operator
+import pickle
 from functools import partial
 
 from nose.tools import assert_raises
@@ -137,7 +138,11 @@ class WhenAccessingMagicAttributes:
         # object. Returning a Mock will cause a crash.
         assert_raises(AttributeError, lambda: Dingus().__pyobjc_object__)
 
+    def should_raise_attribute_error_for_getnewargs(self):
+        # Pickle uses __getnewargs__ to pickle a new-style object.
+        assert_raises(AttributeError, lambda: Dingus().__getnewargs__)
 
+        
 class WhenApplyingBinaryOperators:
     operator_names = ['add', 'and_', 'div', 'lshift', 'mod', 'mul', 'or_',
                       'pow', 'rshift', 'sub', 'xor']
@@ -319,3 +324,31 @@ class WhenCreatingMultipleDinguses:
     def should_return_nothing_when_asked_for_zero_dinguses(self):
         assert not Dingus.many(0)
 
+class WhenPicklingDingus:
+    def setup(self):
+        self.dingus = Dingus("something")
+
+        # interact before pickling
+        self.dingus('arg', kwarg=None)
+        self.dingus.child.function_with_return_value.return_value = 'RETURN'
+        self.dingus.child('arg', kwarg=None)
+        
+        self.dump_str = pickle.dumps(self.dingus, pickle.HIGHEST_PROTOCOL)
+        del self.dingus        
+        self.unpickled_dingus = pickle.loads(self.dump_str)
+
+    def should_remember_name(self):
+        assert self.unpickled_dingus.__name__ == 'something'
+    
+    def should_remember_called_functions(self):
+        assert self.unpickled_dingus.calls('()').one().args == ('arg',) 
+
+    def should_remember_child_calls(self):
+        assert self.unpickled_dingus.calls("child").one().args == ('arg',)
+
+    def should_remember_child_functions_return_value(self):
+        assert self.unpickled_dingus.child.function_with_return_value() == 'RETURN'
+
+    def should_have_replaced_init(self):
+        assert self.unpickled_dingus.__init__ == self.unpickled_dingus._fake_init
+        assert self.unpickled_dingus.child.__init__ == self.unpickled_dingus.child._fake_init

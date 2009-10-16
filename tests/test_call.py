@@ -1,3 +1,5 @@
+import pickle
+
 from dingus import Call
 
 
@@ -19,4 +21,14 @@ class WhenInstantiated:
 
     def should_have_return_value(self):
         assert self.call.return_value == 'test return_value'
+
+
+class WhenPickled(WhenInstantiated):
+    def setup(self):
+        WhenInstantiated.setup(self)
+        call_str = pickle.dumps(self.call, pickle.HIGHEST_PROTOCOL)
+        self.call = pickle.loads(call_str)
+
+
+        
 

@@ -66,6 +66,9 @@ class Call(tuple):
         self.args = self[1]
         self.kwargs = self[2]
         self.return_value = self[3]
+        
+    def __getnewargs__(self):
+        return (self.name, self.args, self.kwargs, self.return_value)
 
 
 class CallList(list):
@@ -162,7 +165,16 @@ class Dingus(object):
         self.calls.append(Call(name, args, kwargs, return_value))
 
     def _should_ignore_attribute(self, name):
-        return name == '__pyobjc_object__'
+        return name in ['__pyobjc_object__', '__getnewargs__']
+    
+    def __getstate__(self):
+        # Python cannot pickle a instancemethod
+        # http://bugs.python.org/issue558238
+        return [ (attr, value) for attr, value in self.__dict__.items() if attr != "__init__"]
+    
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._replace_init_method()
 
     def _existing_or_new_child(self, child_name, default_value=NoArgument):
         if child_name not in self._children:
