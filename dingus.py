@@ -100,6 +100,10 @@ class CallList(list):
                          and (not kwargs or kwargs == call.kwargs)])
 
 
+def returner(return_value):
+    return Dingus(return_value=return_value)
+
+
 class Dingus(object):
     def __init__(self, name=None, full_name=None, **kwargs):
         self._parent = None
