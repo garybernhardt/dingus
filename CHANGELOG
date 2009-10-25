@@ -7,7 +7,7 @@ always iterated infinitely.
 Dingus(foo=returner(5)) will make the dingus' foo method return 5. All
 returner() does is create a dingus with the specified return_value.
 
-- Renamed the "once" method to "one". "once" still exists but is deprecated.
+- Renamed the "one" method to "once". "one" still exists but is deprecated.
 
 - Improved examples.
 
