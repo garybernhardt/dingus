@@ -7,11 +7,13 @@ import sys
 import new
 
 
-def DingusTestCase(object_under_test, *exclusions):
+def DingusTestCase(object_under_test, exclude=None):
+    exclude = [] if exclude is None else exclude
+
     def get_names_under_test():
         module = sys.modules[object_under_test.__module__]
         for name, value in module.__dict__.iteritems():
-            if value is object_under_test or name in exclusions:
+            if value is object_under_test or name in exclude:
                 yield name
 
     class TestCase(object):

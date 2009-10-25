@@ -8,7 +8,8 @@ from dingus import DingusTestCase, Dingus
 
 class WhenObjectIsExcludedFromTest:
     def setup(self):
-        class TestCase(DingusTestCase(module.ClassUnderTest, 'Collaborator')):
+        class TestCase(DingusTestCase(module.ClassUnderTest,
+                                      exclude=['Collaborator'])):
             pass
         self.test_case_instance = TestCase()
         self.test_case_instance.setup()
