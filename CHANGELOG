@@ -1,0 +1,22 @@
+0.2
+
+- Dinguses now yield exactly one item when iterated over. Previously, they
+always iterated infinitely.
+
+- Added a helper function to specify return values when creating dinguses:
+Dingus(foo=returner(5)) will make the dingus' foo method return 5. All
+returner() does is create a dingus with the specified return_value.
+
+- Renamed the "once" method to "one". "once" still exists but is deprecated.
+
+- Improved examples.
+
+- Added ability to exclude objects when isolating with DingusTestCase. Give
+DingusTestCase an "exclude" keyword argument that lists the names of the
+objects that should be left alone (see examples/isolation).
+
+- Fixed an exception when using tuples as keys in a dingus. (Thanks, Christian
+Wyglendowski)
+
+- Added support for pickling dinguses (Thanks, Tanel Külaots)
+
