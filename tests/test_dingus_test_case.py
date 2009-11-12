@@ -31,7 +31,11 @@ class WhenCallingSetupFunction:
     def teardown(self):
         self.test_case_instance.teardown()
 
-    def should_replace_module_attributes(self):
+    def should_not_replace_module_dunder_attributes(self):
+        assert isinstance(module.__name__, str)
+        assert isinstance(module.__file__, str)
+
+    def should_replace_module_non_dunder_attributes(self):
         assert isinstance(module.atomic_value, Dingus)
 
     def should_replace_collaborating_classes(self):

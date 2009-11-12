@@ -29,9 +29,9 @@ def DingusTestCase(object_under_test, exclude=None):
             old_module_dict = module.__dict__.copy()
             module_keys = set(module.__dict__.iterkeys())
 
-            replaced_keys = (module_keys -
-                             set(['__builtins__', '__builtin__']) -
-                             set(names_under_test))
+            dunders = set([k for k in module_keys
+                           if k.startswith('__') and k.endswith('__')])
+            replaced_keys = (module_keys - dunders - set(names_under_test))
             for key in replaced_keys:
                 module.__dict__[key] = Dingus()
             module.__dict__['__dingused_dict__'] = old_module_dict
