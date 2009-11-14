@@ -142,7 +142,7 @@ class WhenAccessingMagicAttributes:
         # Pickle uses __getnewargs__ to pickle a new-style object.
         assert_raises(AttributeError, lambda: Dingus().__getnewargs__)
 
-        
+
 class WhenApplyingBinaryOperators:
     operator_names = ['add', 'and_', 'div', 'lshift', 'mod', 'mul', 'or_',
                       'pow', 'rshift', 'sub', 'xor']
@@ -217,6 +217,13 @@ class WhenSettingAttributes:
 
     def should_return_distinct_dinguses_for_different_attributes(self):
         assert self.dingus['attr'] is not self.dingus['attr2']
+
+
+class WhenDeletingAttributes:
+    def should_record_deletion(self):
+        dingus = Dingus()
+        del dingus.foo
+        assert dingus.calls('__delattr__', 'foo').once()
 
 
 class WhenAccessingItems:

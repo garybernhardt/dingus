@@ -200,6 +200,9 @@ class Dingus(object):
             raise AttributeError(name)
         return self._existing_or_new_child(name)
 
+    def __delattr__(self, name):
+        self._log_call('__delattr__', (name,), {}, None)
+
     def __getitem__(self, index):
         child_name = '[%s]' % (index,)
         return_value = self._existing_or_new_child(child_name)
