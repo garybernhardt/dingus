@@ -307,6 +307,12 @@ class WhenSpecifyingMethodReturnValuesViaKeywordArguments:
         object_with_result = Dingus(method__returns=result)
         assert object_with_result.method() is result
 
+    def should_record_calls_on_children(self):
+        result = Dingus()
+        object_with_result = Dingus(method__returns=result)
+        object_with_result.method()
+        assert object_with_result.calls('method')
+
 
 class WhenCallingInitMethod:
     def should_record_call(self):

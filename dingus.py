@@ -46,7 +46,6 @@ def DingusTestCase(object_under_test, exclude=None):
     return TestCase
 
 
-
 # These sentinels are used for argument defaults because the user might want
 # to pass in None, which is different in some cases than passing nothing.
 class NoReturnValue(object):
@@ -118,7 +117,9 @@ class Dingus(object):
         for attr_name, attr_value in kwargs.iteritems():
             if attr_name.endswith('__returns'):
                 attr_name = attr_name.replace('__returns', '')
-                setattr(self, attr_name, lambda *args, **kwargs: attr_value)
+                returner = self._create_child(attr_name)
+                returner.return_value = attr_value
+                setattr(self, attr_name, returner)
             else:
                 setattr(self, attr_name, attr_value)
 
