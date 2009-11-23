@@ -365,3 +365,13 @@ class WhenPicklingDingus:
     def should_have_replaced_init(self):
         assert self.unpickled_dingus.__init__ == self.unpickled_dingus._fake_init
         assert self.unpickled_dingus.child.__init__ == self.unpickled_dingus.child._fake_init
+
+
+class WhenDingusIsSubclassed:
+    def should_return_subclass_instances_instead_of_dinguses(self):
+        class MyDingus(Dingus):
+            pass
+
+        dingus = MyDingus()
+        assert isinstance(dingus.foo, MyDingus)
+

@@ -139,7 +139,7 @@ class Dingus(object):
         separator = ('' if (name.startswith('()') or name.startswith('['))
                      else '.')
         full_name = self._full_name + separator + name
-        child = Dingus(name, full_name)
+        child = self.__class__(name, full_name)
         child._parent = self
         return child
 
