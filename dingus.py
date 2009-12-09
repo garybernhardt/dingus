@@ -104,10 +104,10 @@ def returner(return_value):
 
 
 class Dingus(object):
-    def __init__(self, name=None, full_name=None, **kwargs):
+    def __init__(self, dingus_name=None, full_name=None, **kwargs):
         self._parent = None
         self.reset()
-        name = 'dingus_%i' % id(self) if name is None else name
+        name = 'dingus_%i' % id(self) if dingus_name is None else dingus_name
         full_name = name if full_name is None else full_name
         self._short_name = name
         self._full_name = full_name
