@@ -41,7 +41,7 @@ class WhenOpeningURLs(DingusTestCase(urlopen)):
         # we don't care about that for this test. We pass in DontCare for
         # things we don't care about, and the dingus will ignore that argument
         # for the purposes of this assertion.
-        assert opener.calls('open', self.url, DontCare).one()
+        assert opener.calls('open', self.url, DontCare, DontCare).one()
 
         # Note that we never told the _opener dingus that it should have an
         # "open" method. A dingus has *all* methods - it will try to allow
