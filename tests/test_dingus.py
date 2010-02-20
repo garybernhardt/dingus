@@ -1,6 +1,5 @@
 import operator
 import pickle
-from functools import partial
 
 from nose.tools import assert_raises
 
