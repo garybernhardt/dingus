@@ -46,6 +46,63 @@ def DingusTestCase(object_under_test, exclude=None):
     return TestCase
 
 
+def patch(object_path):
+    module_name, attribute_name = object_path.rsplit('.', 1)
+    return _Patcher(module_name, attribute_name)
+
+
+class _Patcher:
+    def __init__(self, module_name, attribute_name):
+        self.module_name = module_name
+        self.attribute_name = attribute_name
+        self.module = _importer(self.module_name)
+
+    def __call__(self, fn):
+        def new_fn(*args, **kwargs):
+            self.patch_object()
+            try:
+                return fn(*args, **kwargs)
+            finally:
+                self.restore_object()
+
+        new_fn.__name__ = fn.__name__
+        new_fn.__doc__ = fn.__doc__
+        new_fn.__dict__ = fn.__dict__
+        return new_fn
+
+    def __enter__(self):
+        self.patch_object()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.restore_object()
+
+    def patch_object(self):
+        self.original_object = getattr(self.module, self.attribute_name)
+        setattr(self.module, self.attribute_name, Dingus())
+
+    def restore_object(self):
+        setattr(self.module, self.attribute_name, self.original_object)
+
+
+def _importer(target):
+    components = target.split('.')
+    import_path = components.pop(0)
+    thing = __import__(import_path)
+
+    for comp in components:
+        import_path += ".%s" % comp
+        thing = _dot_lookup(thing, comp, import_path)
+    return thing
+
+
+def _dot_lookup(thing, comp, import_path):
+    try:
+        return getattr(thing, comp)
+    except AttributeError:
+        __import__(import_path)
+        return getattr(thing, comp)
+
+
 # These sentinels are used for argument defaults because the user might want
 # to pass in None, which is different in some cases than passing nothing.
 class NoReturnValue(object):
