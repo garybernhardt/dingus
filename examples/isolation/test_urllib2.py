@@ -41,9 +41,12 @@ class WhenOpeningURLs(DingusTestCase(urlopen)):
         # we don't care about that for this test. We pass in DontCare for
         # things we don't care about, and the dingus will ignore that argument
         # for the purposes of this assertion.
-#         assert opener.calls('open', self.url, DontCare, DontCare).one()
-	# Alternatively, arguments can be extracted and checked directly
-	assert opener.calls('open').one().args[0] == self.url
+        #     assert opener.calls('open', self.url, DontCare, DontCare).once()
+        # However, since we want this test to work across all Python versions,
+        # and the opener.open() call differs between them, we'll use a
+        # slightly more complex method to only check the first argument of the
+        # open() call.
+        assert opener.calls('open').once().args[0] == self.url
 
         # Note that we never told the _opener dingus that it should have an
         # "open" method. A dingus has *all* methods - it will try to allow
