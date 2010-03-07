@@ -46,16 +46,25 @@ def DingusTestCase(object_under_test, exclude=None):
     return TestCase
 
 
-def patch(object_path):
+# These sentinels are used for argument defaults because the user might want
+# to pass in None, which is different in some cases than passing nothing.
+class NoReturnValue(object):
+    pass
+class NoArgument(object):
+    pass
+
+
+def patch(object_path, new_object=NoArgument):
     module_name, attribute_name = object_path.rsplit('.', 1)
-    return _Patcher(module_name, attribute_name)
+    return _Patcher(module_name, attribute_name, new_object)
 
 
 class _Patcher:
-    def __init__(self, module_name, attribute_name):
+    def __init__(self, module_name, attribute_name, new_object):
         self.module_name = module_name
         self.attribute_name = attribute_name
         self.module = _importer(self.module_name)
+        self.new_object = Dingus() if new_object is NoArgument else new_object
 
     def __call__(self, fn):
         def new_fn(*args, **kwargs):
@@ -78,7 +87,7 @@ class _Patcher:
 
     def patch_object(self):
         self.original_object = getattr(self.module, self.attribute_name)
-        setattr(self.module, self.attribute_name, Dingus())
+        setattr(self.module, self.attribute_name, self.new_object)
 
     def restore_object(self):
         setattr(self.module, self.attribute_name, self.original_object)
@@ -101,14 +110,6 @@ def _dot_lookup(thing, comp, import_path):
     except AttributeError:
         __import__(import_path)
         return getattr(thing, comp)
-
-
-# These sentinels are used for argument defaults because the user might want
-# to pass in None, which is different in some cases than passing nothing.
-class NoReturnValue(object):
-    pass
-class NoArgument(object):
-    pass
 
 
 class DontCare(object):

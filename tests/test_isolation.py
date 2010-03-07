@@ -21,3 +21,8 @@ class WhenPatchingObjects:
             assert isinstance(urllib2.urlopen, Dingus)
         assert not isinstance(urllib2.urlopen, Dingus)
 
+    def should_be_able_to_provide_dingus(self):
+        my_dingus = Dingus()
+        with patch('urllib2.urlopen', my_dingus):
+            assert urllib2.urlopen is my_dingus
+
