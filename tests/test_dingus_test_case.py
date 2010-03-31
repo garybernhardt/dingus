@@ -1,5 +1,3 @@
-import sys
-import new
 from tests import test_case_fixture as module
 from tests.test_case_fixture import ClassUnderTest, Collaborator
 

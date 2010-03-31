@@ -1,5 +1,4 @@
 from nose.tools import assert_raises
-from nose.tools import raises
 
 from dingus import exception_raiser
 

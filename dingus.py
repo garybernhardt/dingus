@@ -4,8 +4,7 @@
 
 
 import sys
-import new
-
+from functools import wraps
 
 def DingusTestCase(object_under_test, exclude=None):
     exclude = [] if exclude is None else exclude
@@ -29,8 +28,8 @@ def DingusTestCase(object_under_test, exclude=None):
             old_module_dict = module.__dict__.copy()
             module_keys = set(module.__dict__.iterkeys())
 
-            dunders = set([k for k in module_keys
-                           if k.startswith('__') and k.endswith('__')])
+            dunders = set(k for k in module_keys
+                           if k.startswith('__') and k.endswith('__'))
             replaced_keys = (module_keys - dunders - set(names_under_test))
             for key in replaced_keys:
                 module.__dict__[key] = Dingus()
@@ -67,16 +66,13 @@ class _Patcher:
         self.new_object = Dingus() if new_object is NoArgument else new_object
 
     def __call__(self, fn):
+        @wraps(fn)
         def new_fn(*args, **kwargs):
             self.patch_object()
             try:
                 return fn(*args, **kwargs)
             finally:
                 self.restore_object()
-
-        new_fn.__name__ = fn.__name__
-        new_fn.__doc__ = fn.__doc__
-        new_fn.__dict__ = fn.__dict__
         return new_fn
 
     def __enter__(self):
