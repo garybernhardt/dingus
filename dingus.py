@@ -12,7 +12,6 @@ def DingusTestCase(object_under_test, exclude=None):
     def get_names_under_test():
         module = sys.modules[object_under_test.__module__]
         for name, value in module.__dict__.iteritems():
-            print name
             if value is object_under_test or name in exclude:
                 yield name
 
