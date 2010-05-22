@@ -36,6 +36,21 @@ class WhenPopulatedWithACall:
         assert not self.calls('test name', wrong_key='wrong_value')
 
 
+class WhenPopulatedWithACallWithKwargs:
+    def setup(self):
+        self.calls = CallList()
+        self.calls.append(Call("name",
+                               "args",
+                               {'kwarg1' : "arg1", 'kwarg2' : "arg2"},
+                               "return_value"))
+
+    def should_return_call_when_querying_for_no_kwargs(self):
+        assert self.calls('name')
+
+    def should_return_call_when_dontcare(self):
+        assert self.calls('name', kwarg1=DontCare, kwarg2='arg2')
+
+
 class WhenPopulatedWithTwoCalls:
     def setup(self):
         self.calls = CallList()
@@ -83,7 +98,7 @@ class WhenCallsDifferInAllWays:
         assert len(self.calls('name1', 'arg1')) == self.call_count / 4
 
     def should_filter_on_kwargs(self):
-        assert len(self.calls('name1', kwarg1=1)) == self.call_count / 4
+        assert len(self.calls('name1', kwarg1=1)) == self.call_count / 2
 
 
 class WhenCallsHaveMultipleArguments:

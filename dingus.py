@@ -12,6 +12,7 @@ def DingusTestCase(object_under_test, exclude=None):
     def get_names_under_test():
         module = sys.modules[object_under_test.__module__]
         for name, value in module.__dict__.iteritems():
+            print name
             if value is object_under_test or name in exclude:
                 yield name
 
@@ -137,6 +138,17 @@ class CallList(list):
             return all(args[i] in (DontCare, call.args[i])
                        for i in range(len(call.args)))
 
+    @staticmethod
+    def _match_kwargs(call, kwargs):
+        if not kwargs:
+            return True
+        elif len(kwargs) != len(call.kwargs):
+            return False
+        else:
+            return all(kwargs[name] in (DontCare, val)
+                       for name, val in call.kwargs.iteritems()
+                       if name in kwargs)
+
     def one(self):
         if len(self) == 1:
             return self[0]
@@ -150,7 +162,8 @@ class CallList(list):
         return CallList([call for call in self
                          if (name is NoArgument or name == call.name)
                          and self._match_args(call, args)
-                         and (not kwargs or kwargs == call.kwargs)])
+                         and self._match_kwargs(call, kwargs)])
+#and (not kwargs or kwargs == call.kwargs)])
 
 
 def returner(return_value):
