@@ -45,7 +45,7 @@ class WhenPopulatedWithACallWithKwargs:
                                "return_value"))
 
     def should_return_call_when_querying_for_no_kwargs(self):
-        assert self.calls('name')
+        assert self.calls('name').one()
 
     def should_return_call_when_dontcare(self):
         assert self.calls('name', kwarg1=DontCare, kwarg2='arg2')
@@ -98,7 +98,7 @@ class WhenCallsDifferInAllWays:
         assert len(self.calls('name1', 'arg1')) == self.call_count / 4
 
     def should_filter_on_kwargs(self):
-        assert len(self.calls('name1', kwarg1=1)) == self.call_count / 2
+        assert len(self.calls('name1', kwarg1=1)) == self.call_count / 4
 
 
 class WhenCallsHaveMultipleArguments:

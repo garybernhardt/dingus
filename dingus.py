@@ -144,9 +144,8 @@ class CallList(list):
         elif len(kwargs) != len(call.kwargs):
             return False
         else:
-            return all(kwargs[name] in (DontCare, val)
-                       for name, val in call.kwargs.iteritems()
-                       if name in kwargs)
+            return all(name in kwargs and kwargs[name] in (DontCare, val)
+                       for name, val in call.kwargs.iteritems())
 
     def one(self):
         if len(self) == 1:
@@ -162,7 +161,6 @@ class CallList(list):
                          if (name is NoArgument or name == call.name)
                          and self._match_args(call, args)
                          and self._match_kwargs(call, kwargs)])
-#and (not kwargs or kwargs == call.kwargs)])
 
 
 def returner(return_value):
