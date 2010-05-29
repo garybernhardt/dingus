@@ -6,7 +6,8 @@ Watch for changes in all .py files. If changes, run nosetests.
 # Based on original nosy.py by Jeff Winkler, http://jeffwinkler.net
 
 
-import sys, glob, os, stat, time, md5
+import sys, glob, os, stat, time
+from hashlib import md5
 import subprocess
 import re
 
