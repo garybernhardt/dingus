@@ -51,6 +51,15 @@ class WhenPopulatedWithACallWithKwargs:
         assert self.calls('name', kwarg1=DontCare, kwarg2='arg2')
 
 
+class WhenPopulatedWithACallWithNoKwargs:
+    def setup(self):
+        self.calls = CallList()
+        self.calls.append(Call("name", "args", {}, "return_value"))
+
+    def should_not_return_call_when_given_kwarg_filters(self):
+        assert not self.calls('name', kwarg1=0)
+
+
 class WhenPopulatedWithTwoCalls:
     def setup(self):
         self.calls = CallList()
