@@ -280,24 +280,52 @@ class Dingus(object):
         self._remove_child_if_exists(child_name)
         self._existing_or_new_child(child_name, value)
 
-    def _create_operator(name):
+    def _create_infix_operator(name):
         def operator_fn(self, other):
-            return self._existing_or_new_child(name)
+            return_value = self._existing_or_new_child(name)
+            self._log_call(name, (other,), {}, return_value)
+            return return_value
         operator_fn.__name__ = name
         return operator_fn
 
-    def _operators():
-        operator_names = ['add', 'and', 'div', 'lshift', 'mod', 'mul', 'or',
-                          'pow', 'rshift', 'sub', 'xor']
-        reverse_operator_names = ['r%s' % name for name in operator_names]
-        for operator_name in operator_names + reverse_operator_names:
+    _BASE_OPERATOR_NAMES = ['add', 'and', 'div', 'lshift', 'mod', 'mul', 'or',
+                            'pow', 'rshift', 'sub', 'xor']
+
+    def _infix_operator_names(base_operator_names):
+        # This function has to have base_operator_names passed in because
+        # Python's scoping rules prevent it from seeing the class-level
+        # _BASE_OPERATOR_NAMES.
+
+        reverse_operator_names = ['r%s' % name for name in base_operator_names]
+        for operator_name in base_operator_names + reverse_operator_names:
             operator_fn_name = '__%s__' % operator_name
             yield operator_fn_name
 
-    # Define each operator
-    for operator_fn_name in _operators():
-        exec('%s = _create_operator("%s")' % (operator_fn_name,
+    # Define each infix operator
+    for operator_fn_name in _infix_operator_names(_BASE_OPERATOR_NAMES):
+        exec('%s = _create_infix_operator("%s")' % (operator_fn_name,
                                               operator_fn_name))
+
+    def _augmented_operator_names(base_operator_names):
+        # Augmented operators are things like +=. They behavior differently
+        # than normal infix operators because they return self instead of a
+        # new object.
+
+        return ['__i%s__' % operator_name
+                for operator_name in base_operator_names]
+
+    def _create_augmented_operator(name):
+        def operator_fn(self, other):
+            return_value = self
+            self._log_call(name, (other,), {}, return_value)
+            return return_value
+        operator_fn.__name__ = name
+        return operator_fn
+
+    # Define each augmenting operator
+    for operator_fn_name in _augmented_operator_names(_BASE_OPERATOR_NAMES):
+        exec('%s = _create_augmented_operator("%s")' % (operator_fn_name,
+                                                        operator_fn_name))
 
     def __str__(self):
         return '<Dingus %s>' % self._full_name

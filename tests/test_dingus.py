@@ -142,9 +142,14 @@ class WhenAccessingMagicAttributes:
         assert_raises(AttributeError, lambda: Dingus().__getnewargs__)
 
 
-class WhenApplyingBinaryOperators:
-    operator_names = ['add', 'and_', 'div', 'lshift', 'mod', 'mul', 'or_',
-                      'pow', 'rshift', 'sub', 'xor']
+INFIX_OPERATORS = ['add', 'and_', 'div', 'lshift', 'mod', 'mul', 'or_',
+                   'pow', 'rshift', 'sub', 'xor']
+
+
+class WhenApplyingInfixOperators:
+    def __init__(self):
+        self.operators = [getattr(operator, operator_name)
+                          for operator_name in INFIX_OPERATORS]
 
     def assert_returns_new_dingus(self, op):
         left, right = Dingus.many(2)
@@ -152,9 +157,45 @@ class WhenApplyingBinaryOperators:
         assert result is not left and result is not right
 
     def should_always_return_new_dingus(self):
-        for operator_name in self.operator_names:
-            op = getattr(operator, operator_name)
-            yield self.assert_returns_new_dingus, op
+        for operator in self.operators:
+            yield self.assert_returns_new_dingus, operator
+
+    def should_record_call(self):
+        for operator in self.operators:
+            left, right = Dingus.many(2)
+            operator(left, right)
+            operator_name_without_mangling = operator.__name__.replace('_', '')
+            magic_method_name = '__%s__' % operator_name_without_mangling
+            yield assert_call_was_logged, left, magic_method_name, right
+
+
+class WhenApplyingAugmentedOperators:
+    AUGMENTED_OPERATORS = ['i%s' % operator_name.replace('_', '')
+                           for operator_name in INFIX_OPERATORS]
+
+    def __init__(self):
+        self.operators = [getattr(operator, operator_name)
+                          for operator_name in self.AUGMENTED_OPERATORS]
+
+    def assert_returns_same_dingus(self, op):
+        left, right = Dingus.many(2)
+        result = op(left, right)
+        assert result is left
+
+    def should_always_return_same_dingus(self):
+        for operator in self.operators:
+            yield self.assert_returns_same_dingus, operator
+
+    def should_record_call(self):
+        for operator in self.operators:
+            left, right = Dingus.many(2)
+            operator(left, right)
+            magic_method_name = '__%s__' % operator.__name__
+            yield assert_call_was_logged, left, magic_method_name, right
+
+
+def assert_call_was_logged(dingus, method_name, *args):
+    assert dingus.calls(method_name, *args).once()
 
 
 class WhenComputingLength:
