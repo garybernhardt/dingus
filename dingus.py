@@ -156,9 +156,9 @@ class CallList(list):
     def once(self):
         return self.one()
 
-    def __call__(self, name=NoArgument, *args, **kwargs):
+    def __call__(self, __name=NoArgument, *args, **kwargs):
         return CallList([call for call in self
-                         if (name is NoArgument or name == call.name)
+                         if (__name is NoArgument or __name == call.name)
                          and self._match_args(call, args)
                          and self._match_kwargs(call, kwargs)])
 
