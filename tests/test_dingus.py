@@ -278,13 +278,6 @@ class WhenAccessingItems:
             dingus['item']
         assert len(dingus.calls('__getitem__', 'item')) == 2
 
-    def should_log_access_after_contains_iterator(self):
-        dingus = Dingus()
-        dingus['item'] = 'value'
-        for _ in range(2):
-            'value' in dingus
-        assert len(dingus.calls('__contains__', 'value')) == 2
-
     def should_accept_tuples_as_item_name(self):
         dingus = Dingus()
         assert dingus[('x', 'y')]
@@ -316,6 +309,29 @@ class WhenSettingItems:
         dingus = Dingus()
         dingus[('x', 'y')] = 'foo'
         assert dingus[('x', 'y')] == 'foo'
+
+
+class WhenUsedAsIterator:
+    def should_log_access_after_contains_iterator(self):
+        dingus = Dingus()
+        assert not dingus.calls('__contains__', 'index')
+        'index' in dingus
+        assert dingus.calls('__contains__', 'index')
+
+    def should_known_when_dingus_contains_things_like_a_dict(self):
+        dingus = Dingus()
+        assert 'index' not in dingus
+        dingus['index'] = 1
+        assert 'index' in dingus
+
+    def should_know_when_dingus_contains_things_like_a_list(self):
+        dingus = Dingus()
+        assert 'five' not in dingus
+        dingus[5] = 'five'
+        # XXX: This fails because dinguses do containment in the dict style.
+        # In dicts, containment is based on key; in lists, it's based on
+        # value.
+        assert 'five' in dingus
 
 
 class WhenNothingIsSet:
