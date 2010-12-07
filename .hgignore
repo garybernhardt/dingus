@@ -1,6 +1,0 @@
-^env$
-^dingus.egg-info$
-\.pyc$
-^build$
-^dist$
-
