@@ -278,6 +278,13 @@ class WhenAccessingItems:
             dingus['item']
         assert len(dingus.calls('__getitem__', 'item')) == 2
 
+    def should_log_access_after_contains_iterator(self):
+        dingus = Dingus()
+        dingus['item'] = 'value'
+        for _ in range(2):
+            'value' in dingus
+        assert len(dingus.calls('__contains__', 'value')) == 2
+
     def should_accept_tuples_as_item_name(self):
         dingus = Dingus()
         assert dingus[('x', 'y')]

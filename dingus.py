@@ -280,6 +280,10 @@ class Dingus(object):
         self._remove_child_if_exists(child_name)
         self._existing_or_new_child(child_name, value)
 
+    def __contains__(self, value):
+        self._log_call('__contains__', (value,), {}, None)
+        return True
+
     def _create_infix_operator(name):
         def operator_fn(self, other):
             return_value = self._existing_or_new_child(name)
