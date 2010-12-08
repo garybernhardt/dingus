@@ -1,13 +1,13 @@
 from setuptools import setup
 
 setup(name='dingus',
-      version='0.2',
+      version='0.3',
       description='A record-then-assert mocking library',
       author='Gary Bernhardt',
       author_email='gary.bernhardt@gmail.com',
       py_modules=['dingus'],
       license='MIT',
-      url='http://bitbucket.org/garybernhardt/dingus',
+      url='https://github.com/garybernhardt/dingus',
       keywords='testing test mocking mock double stub fake record assert',
       classifiers=["Development Status :: 2 - Pre-Alpha",
                    "Intended Audience :: Developers",
