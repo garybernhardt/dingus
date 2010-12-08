@@ -1,4 +1,5 @@
-Dinguses
+========
+DINGUSES
 ========
 
 A dingus is sort of like a mock object. The main difference is that you don't
@@ -35,15 +36,17 @@ always return the same object, regardless of the arguments.
     >>> d(55)
     <Dingus root()>
 
-Recording and Assertions
+========================
+RECORDING AND ASSERTIONS
 ========================
 
 At any time we can get a list of calls that have been made to a dingus. Each
 entry in the call list contains:
-  * the name of the method called (or "()" if the dingus itself was called)
-  * The arguments, or () if none
-  * The keyword argumnets, or {} if none
-  * The value that was returned to the caller
+
+* the name of the method called (or "()" if the dingus itself was called)
+* The arguments, or () if none
+* The keyword argumnets, or {} if none
+* The value that was returned to the caller
 
 Here is a list of the calls we've made to d so far:
 
@@ -76,7 +79,8 @@ interaction:
 
 (Hopefully your real-world dingus recordings won't look like this!)
 
-Patching
+========
+PATCHING
 ========
 
 Dingus provides a context manager for patching objects during tests. For
@@ -97,12 +101,13 @@ You can also use this as a decorator on your test methods:
     ...     pass
     ...
 
-Dangerous Magic
+===============
+DANGEROUS MAGIC
 ===============
 
 Dingus can also automatically replace a module's globals when running tests.
 This allows you to write fully isolated unit tests. See
-examples/urllib2/test_urllib2.py for an example. The author no longer
+examples/urllib2/test\_urllib2.py for an example. The author no longer
 recommends this feature, as it can encourage very brittle tests. You should
 feel the pain of manually mocking dependencies; the pain will tell you when a
 class collaborates with too many others.
