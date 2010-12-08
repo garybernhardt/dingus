@@ -85,8 +85,8 @@ example:
     >>> from dingus import patch
     >>> import urllib2
     >>> with patch('urllib2.urlopen'):
-    ...     print urllib2.urlopen
-    <Dingus urllib2.urlopen>
+    ...     print urllib2.urlopen.__class__
+    <class 'dingus.Dingus'>
     >>> print urllib2.urlopen.__class__
     <type 'function'>
 
