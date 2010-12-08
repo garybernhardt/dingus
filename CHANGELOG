@@ -20,3 +20,12 @@ Wyglendowski)
 
 - Added support for pickling dinguses (Thanks, Tanel Külaots)
 
+0.3
+
+- Remove automocking of magic __methods__ in DingusTestCase (thanks, Dave
+  Stanek).
+
+- Make attributes "del"able.
+
+- Add patch decorator/context manager.
+
