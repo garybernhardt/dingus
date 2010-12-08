@@ -63,7 +63,11 @@ class _Patcher:
         self.module_name = module_name
         self.attribute_name = attribute_name
         self.module = _importer(self.module_name)
-        self.new_object = Dingus() if new_object is NoArgument else new_object
+        if new_object is NoArgument:
+            full_name = '%s.%s' % (module_name, attribute_name)
+            self.new_object = Dingus(full_name)
+        else:
+            self.new_object = new_object
 
     def __call__(self, fn):
         @wraps(fn)

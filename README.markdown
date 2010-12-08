@@ -1,3 +1,6 @@
+Dinguses
+========
+
 A dingus is sort of like a mock object. The main difference is that you don't
 set up expectations ahead of time. You just run your code, using a dingus in
 place of another object or class, and it will record what happens to it. Then,
@@ -31,6 +34,9 @@ always return the same object, regardless of the arguments.
     <Dingus root()>
     >>> d(55)
     <Dingus root()>
+
+Recording and Assertions
+========================
 
 At any time we can get a list of calls that have been made to a dingus. Each
 entry in the call list contains:
@@ -70,7 +76,34 @@ interaction:
 
 (Hopefully your real-world dingus recordings won't look like this!)
 
+Patching
+========
+
+Dingus provides a context manager for patching objects during tests. For
+example:
+
+    >>> from dingus import patch
+    >>> import urllib2
+    >>> with patch('urllib2.urlopen'):
+    ...     print urllib2.urlopen
+    <Dingus urllib2.urlopen>
+    >>> print urllib2.urlopen.__class__
+    <type 'function'>
+
+You can also use this as a decorator on your test methods:
+
+    >>> @patch('urllib2.urlopen')
+    ... def test_something(self):
+    ...     pass
+    ...
+
+Dangerous Magic
+===============
+
 Dingus can also automatically replace a module's globals when running tests.
 This allows you to write fully isolated unit tests. See
-examples/urllib2/test_urllib2.py for an example.
+examples/urllib2/test_urllib2.py for an example. The author no longer
+recommends this feature, as it can encourage very brittle tests. You should
+feel the pain of manually mocking dependencies; the pain will tell you when a
+class collaborates with too many others.
 
