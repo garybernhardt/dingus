@@ -7,6 +7,9 @@ import sys
 from functools import wraps
 
 def DingusTestCase(object_under_test, exclude=None):
+    if isinstance(exclude, basestring):
+        raise ValueError("Strings not allowed for exclude. " +
+                         "Use a list: exclude=['identifier']")
     exclude = [] if exclude is None else exclude
 
     def get_names_under_test():

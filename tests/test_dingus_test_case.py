@@ -1,3 +1,5 @@
+from nose.tools import assert_raises
+
 from tests import test_case_fixture as module
 from tests.test_case_fixture import ClassUnderTest, Collaborator
 
@@ -14,6 +16,12 @@ class WhenObjectIsExcludedFromTest:
 
     def should_not_replace_it_with_dingus(self):
         assert module.Collaborator is Collaborator
+
+    def should_not_allow_strings_used_to_exclude(self):
+        assert_raises(ValueError,
+                      DingusTestCase,
+                      module.ClassUnderTest,
+                      exclude='a_string')
 
     def teardown(self):
         self.test_case_instance.teardown()
