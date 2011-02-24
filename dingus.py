@@ -344,6 +344,10 @@ class Dingus(object):
     def __iter__(self):
         return iter([self._existing_or_new_child('__iter__')])
 
+    # We don't want to define __deepcopy__ at all. If there isn't one, deepcopy
+    # will clone the whole object, which is what we want.
+    __deepcopy__ = None
+
 
 def exception_raiser(exception):
     def raise_exception(*args, **kwargs):

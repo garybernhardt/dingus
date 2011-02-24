@@ -1,5 +1,6 @@
 import operator
 import pickle
+import copy
 
 from nose.tools import assert_raises
 
@@ -414,4 +415,17 @@ class WhenDingusIsSubclassed:
 
         dingus = MyDingus()
         assert isinstance(dingus.foo, MyDingus)
+
+
+class WhenDingusIsDeepCopied:
+    def should_retain_attributes(self):
+        dingus = Dingus(foo=1)
+        assert copy.deepcopy(dingus).foo == 1
+
+    def should_be_independent_of_original_dingus(self):
+        dingus = Dingus()
+        copied_dingus = copy.deepcopy(dingus)
+        copied_dingus.frob()
+        assert copied_dingus.calls('frob').once()
+        assert not dingus.calls('frob')
 
