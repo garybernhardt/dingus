@@ -23,9 +23,18 @@ Wyglendowski)
 0.3
 
 - Remove automocking of magic __methods__ in DingusTestCase (thanks, Dave
-  Stanek).
+Stanek).
 
 - Make attributes "del"able.
 
 - Add patch decorator/context manager.
+
+0.3.1
+
+- Fix simple README bug
+
+0.3.2
+
+- Make dinguses copyable with copy.deepcopy (this will return a new dingus
+identical, but separate from, the old)
 
