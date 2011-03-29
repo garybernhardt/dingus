@@ -96,6 +96,18 @@ class _Patcher:
         setattr(self.module, self.attribute_name, self.original_object)
 
 
+def isolate(object_path):
+    def decorator(fn):
+        module_name, object_name = object_path.split('.')
+        module = sys.modules[module_name]
+        neighbors = set(dir(module)) - set([object_name])
+        for neighbor in neighbors:
+            neighbor_path = '%s.%s' % (module_name, neighbor)
+            fn = patch(neighbor_path)(fn)
+        return fn
+    return decorator
+
+
 def _importer(target):
     components = target.split('.')
     import_path = components.pop(0)

@@ -1,7 +1,8 @@
 from __future__ import with_statement
 import urllib2
+import os
 
-from dingus import Dingus, patch
+from dingus import Dingus, patch, isolate
 
 
 class WhenPatchingObjects:
@@ -29,4 +30,17 @@ class WhenPatchingObjects:
     def should_name_dingus_after_patched_object(self):
         with patch('urllib2.urlopen'):
             assert str(urllib2.urlopen) == '<Dingus urllib2.urlopen>'
+
+
+class WhenIsolating:
+    def should_isolate(self):
+        @isolate("os.popen")
+        def ensure_isolation():
+            assert not isinstance(os.popen, Dingus)
+            assert isinstance(os.walk, Dingus)
+
+        assert not isinstance(os.walk, Dingus)
+        ensure_isolation()
+        assert not isinstance(os.walk, Dingus)
+
 
