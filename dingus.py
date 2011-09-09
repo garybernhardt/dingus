@@ -186,7 +186,7 @@ def returner(return_value):
     return Dingus(return_value=return_value)
 
 
-class Dingus(object):
+class BaseDingus(object):
     def __init__(self, dingus_name=None, full_name=None, **kwargs):
         self._parent = None
         self.reset()
@@ -359,6 +359,11 @@ class Dingus(object):
     # We don't want to define __deepcopy__ at all. If there isn't one, deepcopy
     # will clone the whole object, which is what we want.
     __deepcopy__ = None
+
+
+class Dingus(BaseDingus):
+    __enter__ = BaseDingus()
+    __exit__ = BaseDingus()
 
 
 def exception_raiser(exception):
