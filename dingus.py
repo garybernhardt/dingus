@@ -186,8 +186,17 @@ def returner(return_value):
     return Dingus(return_value=return_value)
 
 
-class BaseDingus(object):
-    def __init__(self, dingus_name=None, full_name=None, **kwargs):
+class Dingus(object):
+    @property
+    def __enter__(self):
+        return self._existing_or_new_child('__enter__')
+
+    def __exit__(self, exc_type=None, exc_val=None, exc_tb=None):
+        if exc_type and exc_type not in self._consumes:
+            return False
+        return self._existing_or_new_child('__exit__')
+
+    def __init__(self, dingus_name=None, full_name=None, _consumes=None, **kwargs):
         self._parent = None
         self.reset()
         name = 'dingus_%i' % id(self) if dingus_name is None else dingus_name
@@ -196,6 +205,12 @@ class BaseDingus(object):
         self._full_name = full_name
         self.__name__ = name
         self._full_name = full_name
+        self._consumes = []
+        if _consumes:
+            if hasattr(_consumes, '__iter__'):
+                self._consumes.extend(list(_consumes))
+            else:
+                self._consumes.append(_consumes)
 
         for attr_name, attr_value in kwargs.iteritems():
             if attr_name.endswith('__returns'):
@@ -359,11 +374,6 @@ class BaseDingus(object):
     # We don't want to define __deepcopy__ at all. If there isn't one, deepcopy
     # will clone the whole object, which is what we want.
     __deepcopy__ = None
-
-
-class Dingus(BaseDingus):
-    __enter__ = BaseDingus()
-    __exit__ = BaseDingus()
 
 
 def exception_raiser(exception):

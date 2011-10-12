@@ -446,23 +446,23 @@ class WhenUsedAsAContextManager:
 
         assert self.dingus.calls('()', 'foo').once()
 
-    #def _raiser(self, exc, dingus=None):
-    #    dingus = self.dingus if dingus is None else dingus
-    #    def callable():
-    #        with dingus:
-    #            raise exc
-    #    return callable
+    def _raiser(self, exc, dingus=None):
+        dingus = self.dingus if dingus is None else dingus
+        def callable():
+            with dingus:
+                raise exc
+        return callable
 
-    #def should_not_consume_exceptions_from_context(self):
-    #    assert_raises(KeyError, self._raiser(KeyError))
+    def should_not_consume_exceptions_from_context(self):
+        assert_raises(KeyError, self._raiser(KeyError))
 
-    #def should_be_able_to_consume_an_arbitrary_exception(self):
-    #    dingus = Dingus(__consumes=EOFError)
-    #    self._raiser(EOFError, dingus)()
-    #    assert_raises(KeyError, self._raiser(KeyError, dingus))
+    def should_be_able_to_consume_an_arbitrary_exception(self):
+        dingus = Dingus(_consumes=EOFError)
+        self._raiser(EOFError, dingus)()
+        assert_raises(KeyError, self._raiser(KeyError, dingus))
 
-    #def should_be_able_to_consume_multiple_exceptions(self):
-    #    dingus = Dingus(__consumes=(NameError, NotImplementedError))
-    #    self._raiser(NameError, dingus)()
-    #    self._raiser(NotImplementedError, dingus)()
-    #    assert_raises(KeyError, self._raiser(KeyError, dingus))
+    def should_be_able_to_consume_multiple_exceptions(self):
+        dingus = Dingus(_consumes=(NameError, NotImplementedError))
+        self._raiser(NameError, dingus)()
+        self._raiser(NotImplementedError, dingus)()
+        assert_raises(KeyError, self._raiser(KeyError, dingus))
