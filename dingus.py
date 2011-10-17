@@ -192,12 +192,16 @@ class Dingus(object):
         return self._existing_or_new_child('__enter__')
 
     def __exit__(self, exc_type=None, exc_val=None, exc_tb=None):
-        if exc_type and exc_type not in self._consumes:
+        if exc_type and exc_type not in self.consumed_context_manager_exceptions:
             return False
         else:
             return True
 
-    def __init__(self, dingus_name=None, full_name=None, _consumes=None, **kwargs):
+    def __init__(self,
+                 dingus_name=None,
+                 full_name=None,
+                 consumed_context_manager_exceptions=None,
+                 **kwargs):
         self._parent = None
         self.reset()
         name = 'dingus_%i' % id(self) if dingus_name is None else dingus_name
@@ -206,12 +210,8 @@ class Dingus(object):
         self._full_name = full_name
         self.__name__ = name
         self._full_name = full_name
-        self._consumes = []
-        if _consumes:
-            if hasattr(_consumes, '__iter__'):
-                self._consumes.extend(list(_consumes))
-            else:
-                self._consumes.append(_consumes)
+        self.consumed_context_manager_exceptions = (
+            consumed_context_manager_exceptions or [])
 
         for attr_name, attr_value in kwargs.iteritems():
             if attr_name.endswith('__returns'):

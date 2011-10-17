@@ -453,12 +453,19 @@ class WhenUsedAsAContextManager:
         assert_raises(KeyError, self._raiser(KeyError, dingus))
 
     def should_be_able_to_consume_an_arbitrary_exception(self):
-        dingus = Dingus(_consumes=EOFError)
+        dingus = Dingus(consumed_context_manager_exceptions=(EOFError,))
         self._raiser(EOFError, dingus)()
         assert_raises(KeyError, self._raiser(KeyError, dingus))
 
     def should_be_able_to_consume_multiple_exceptions(self):
-        dingus = Dingus(_consumes=(NameError, NotImplementedError))
+        dingus = Dingus(consumed_context_manager_exceptions=(
+            NameError, NotImplementedError))
         self._raiser(NameError, dingus)()
         self._raiser(NotImplementedError, dingus)()
         assert_raises(KeyError, self._raiser(KeyError, dingus))
+
+    def should_be_able_to_manually_consume_exceptions(self):
+        dingus = Dingus(consumed_context_manager_exceptions=(EOFError,))
+        self._raiser(EOFError, dingus)()
+        assert_raises(KeyError, self._raiser(KeyError, dingus))
+
