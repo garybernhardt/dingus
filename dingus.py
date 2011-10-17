@@ -194,7 +194,8 @@ class Dingus(object):
     def __exit__(self, exc_type=None, exc_val=None, exc_tb=None):
         if exc_type and exc_type not in self._consumes:
             return False
-        return self._existing_or_new_child('__exit__')
+        else:
+            return True
 
     def __init__(self, dingus_name=None, full_name=None, _consumes=None, **kwargs):
         self._parent = None
