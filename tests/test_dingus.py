@@ -430,31 +430,27 @@ class WhenDingusIsDeepCopied:
         assert not dingus.calls('frob')
 
 class WhenUsedAsAContextManager:
-    def setup(self):
-        self.dingus = Dingus()
-
     def should_not_raise_an_exception(self):
-        with self.dingus:
+        with Dingus():
             pass
 
     def should_be_able_to_return_something(self):
-        with patch('__builtin__.open', self.dingus):
-            file_ = open.return_value.__enter__.return_value
-            file_.read.return_value = 'some data'
-            with open('foo') as h:
-                assert 'some data' == h.read()
+        open = Dingus()
+        open().__enter__().read.return_value = "some data"
+        with open('foo') as h:
+            data_that_was_read = h.read()
 
-        assert self.dingus.calls('()', 'foo').once()
+        assert data_that_was_read == "some data"
 
-    def _raiser(self, exc, dingus=None):
-        dingus = self.dingus if dingus is None else dingus
+    def _raiser(self, exc, dingus):
         def callable():
             with dingus:
                 raise exc
         return callable
 
     def should_not_consume_exceptions_from_context(self):
-        assert_raises(KeyError, self._raiser(KeyError))
+        dingus = Dingus()
+        assert_raises(KeyError, self._raiser(KeyError, dingus))
 
     def should_be_able_to_consume_an_arbitrary_exception(self):
         dingus = Dingus(_consumes=EOFError)
