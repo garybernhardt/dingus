@@ -38,3 +38,11 @@ Stanek).
 - Make dinguses copyable with copy.deepcopy (this will return a new dingus
 identical, but separate from, the old)
 
+0.3.3
+
+- Add isolate method (the opposite of patch: it patches everything in the
+object path's module except the object itself. See the README.
+
+- Allow dinguses to be used as context managers in Python 2.7 (thanks, Chris
+Wesseling and Christian Wyglendowski).
+

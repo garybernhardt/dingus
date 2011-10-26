@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='dingus',
-      version='0.3.2',
+      version='0.3.3',
       description='A record-then-assert mocking library',
       long_description=file('README.txt').read(),
       author='Gary Bernhardt',
