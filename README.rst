@@ -101,6 +101,21 @@ You can also use this as a decorator on your test methods:
     ...     pass
     ...
 
+=========
+ISOLATION
+=========
+
+The opposite of patch is isolate. It patches everything except the named object:
+
+    >>> @isolate('urllib2.urlparse')
+    ... def test_urlparse(self):
+    ...     pass
+    ...
+
+When this test runs, everything in the urllib2 module except urlparse will be a
+dingus. Note that this may be slow to execute if the module contains many
+objects; performance patches are welcome. :)
+
 ===============
 DANGEROUS MAGIC
 ===============
