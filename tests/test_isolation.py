@@ -44,3 +44,13 @@ class WhenIsolating:
         assert not isinstance(os.walk, Dingus)
 
 
+class WhenIsolatingSubmoduleObjects:
+    def should_isolate(self):
+        @isolate("os.path.isdir")
+        def ensure_isolation():
+            assert not isinstance(os.path.isdir, Dingus)
+            assert isinstance(os.path.isfile, Dingus)
+
+        assert not isinstance(os.path.isfile, Dingus)
+        ensure_isolation()
+        assert not isinstance(os.path.isfile, Dingus)
