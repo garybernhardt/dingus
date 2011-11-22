@@ -98,7 +98,7 @@ class _Patcher:
 
 def isolate(object_path):
     def decorator(fn):
-        module_name, object_name = object_path.split('.')
+        module_name, object_name = object_path.rsplit('.', 1)
         module = sys.modules[module_name]
         neighbors = set(dir(module)) - set([object_name])
         for neighbor in neighbors:
