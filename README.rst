@@ -107,6 +107,7 @@ ISOLATION
 
 The opposite of patch is isolate. It patches everything except the named object:
 
+    >>> from dingus import isolate
     >>> @isolate('urllib2.urlparse')
     ... def test_urlparse(self):
     ...     pass
