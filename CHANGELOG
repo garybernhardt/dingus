@@ -46,3 +46,7 @@ object path's module except the object itself. See the README.
 - Allow dinguses to be used as context managers in Python 2.7 (thanks, Chris
 Wesseling and Christian Wyglendowski).
 
+0.3.4
+
+- Correctly isolate submodule objects like os.path.isdir (thanks, CJ Gaconnet)
+
