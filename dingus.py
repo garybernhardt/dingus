@@ -1,8 +1,3 @@
-# This library was written by Gary Bernhardt and is licensed under the BSD
-# license. It grew out of an old version of the mock library by Michael Foord
-# available at http://www.voidspace.org.uk/python/mock.html.
-
-
 import sys
 from functools import wraps
 
