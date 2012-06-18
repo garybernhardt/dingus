@@ -1,7 +1,7 @@
 from dingus import Dingus, returner
 
 
-class WhenCreatingReturner:
+class WhenCreatingReturner(object):
     def should_return_given_value(self):
         return_value = Dingus()
         r = returner(return_value)

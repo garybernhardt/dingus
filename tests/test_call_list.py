@@ -1,7 +1,7 @@
 from dingus import Call, CallList, DontCare
 
 
-class WhenEmpty:
+class WhenEmpty(object):
     def setup(self):
         self.calls = CallList()
 
@@ -12,7 +12,7 @@ class WhenEmpty:
         assert not self.calls.one()
 
 
-class WhenPopulatedWithACall:
+class WhenPopulatedWithACall(object):
     def setup(self):
         self.calls = CallList()
         self.calls.append(Call('test name',
@@ -36,7 +36,7 @@ class WhenPopulatedWithACall:
         assert not self.calls('test name', wrong_key='wrong_value')
 
 
-class WhenPopulatedWithACallWithKwargs:
+class WhenPopulatedWithACallWithKwargs(object):
     def setup(self):
         self.calls = CallList()
         self.calls.append(Call("name",
@@ -51,7 +51,7 @@ class WhenPopulatedWithACallWithKwargs:
         assert self.calls('name', kwarg1=DontCare, kwarg2='arg2')
 
 
-class WhenPopulatedWithACallWithNoKwargs:
+class WhenPopulatedWithACallWithNoKwargs(object):
     def setup(self):
         self.calls = CallList()
         self.calls.append(Call("name", "args", {}, "return_value"))
@@ -60,7 +60,7 @@ class WhenPopulatedWithACallWithNoKwargs:
         assert not self.calls('name', kwarg1=0)
 
 
-class WhenPopulatedWithTwoCalls:
+class WhenPopulatedWithTwoCalls(object):
     def setup(self):
         self.calls = CallList()
         for _ in range(2):
@@ -70,7 +70,7 @@ class WhenPopulatedWithTwoCalls:
         assert not self.calls.one()
 
 
-class WhenTwoCallsDifferByName:
+class WhenTwoCallsDifferByName(object):
     def setup(self):
         self.calls = CallList()
         self.calls.append(Call('name1', (), {}, None))
@@ -80,7 +80,7 @@ class WhenTwoCallsDifferByName:
         assert self.calls('name1').one()
 
 
-class WhenTwoCallsDifferByArgs:
+class WhenTwoCallsDifferByArgs(object):
     def setup(self):
         self.calls = CallList()
         self.calls.append(Call('name', ('arg1',), {}, None))
@@ -90,7 +90,7 @@ class WhenTwoCallsDifferByArgs:
         assert self.calls('name', 'arg1').one()
 
 
-class WhenCallsDifferInAllWays:
+class WhenCallsDifferInAllWays(object):
     def setup(self):
         self.calls = CallList()
         for name in ('name1', 'name2'):
@@ -110,7 +110,7 @@ class WhenCallsDifferInAllWays:
         assert len(self.calls('name1', kwarg1=1)) == self.call_count / 4
 
 
-class WhenCallsHaveMultipleArguments:
+class WhenCallsHaveMultipleArguments(object):
     def setup(self):
         self.calls = CallList()
         for arg1 in (1, 2):

@@ -1,7 +1,7 @@
 atomic_value = 'foo'
 
-class ClassUnderTest:
+class ClassUnderTest(object):
     pass
-class Collaborator:
+class Collaborator(object):
     pass
 

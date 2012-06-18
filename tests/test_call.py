@@ -3,7 +3,7 @@ import pickle
 from dingus import Call
 
 
-class WhenInstantiated:
+class WhenInstantiated(object):
     def setup(self):
         self.call = Call('test name',
                          'test args',
@@ -28,7 +28,4 @@ class WhenPickled(WhenInstantiated):
         WhenInstantiated.setup(self)
         call_str = pickle.dumps(self.call, pickle.HIGHEST_PROTOCOL)
         self.call = pickle.loads(call_str)
-
-
-        
 
