@@ -7,7 +7,7 @@ from nose.tools import assert_raises
 from dingus import Dingus, patch
 
 
-class WhenCreatingNewDingus:
+class WhenCreatingNewDingus(object):
     def setup(self):
         self.dingus = Dingus()
 
@@ -18,7 +18,7 @@ class WhenCreatingNewDingus:
         assert self.dingus.__name__ == 'dingus_%i' % id(self.dingus)
 
 
-class WhenCreatingNewDingusWithAName:
+class WhenCreatingNewDingusWithAName(object):
     def setup(self):
         self.dingus = Dingus('something')
 
@@ -38,7 +38,7 @@ class WhenCreatingNewDingusWithAName:
         assert repr(self.dingus()['5']) == '<Dingus something()[5]>'
 
 
-class WhenCallingDingusAsFunction:
+class WhenCallingDingusAsFunction(object):
     def setup(self):
         self.dingus = Dingus()
         self.dingus('arg', kwarg=None)
@@ -59,7 +59,7 @@ class WhenCallingDingusAsFunction:
         assert self.dingus.calls.one().kwargs == {'kwarg': None}
 
 
-class WhenCallingAttributeChild:
+class WhenCallingAttributeChild(object):
     def setup(self):
         self.parent = Dingus()
         self.child = self.parent.child
@@ -78,7 +78,7 @@ class WhenCallingAttributeChild:
         assert self.parent.calls('child').one().kwargs == {'kwarg': None}
 
 
-class WhenCallingAttributeGrandchild:
+class WhenCallingAttributeGrandchild(object):
     def setup(self):
         self.grandparent = Dingus()
         self.parent = self.grandparent.parent
@@ -92,7 +92,7 @@ class WhenCallingAttributeGrandchild:
         assert self.parent.calls('child').one()
 
 
-class WhenCallingAttributesOfReturnedValues:
+class WhenCallingAttributesOfReturnedValues(object):
     def setup(self):
         self.grandparent = Dingus()
         self.parent = self.grandparent()
@@ -112,14 +112,14 @@ class WhenCallingAttributesOfReturnedValues:
         assert not self.grandparent.calls('().child')
 
 
-class WhenCallingItemChild:
+class WhenCallingItemChild(object):
     def should_record_call(self):
         parent = Dingus()
         parent['child']()
         assert parent.calls('[child]').one()
 
 
-class WhenCallingListItemOfDingus:
+class WhenCallingListItemOfDingus(object):
     def setup(self):
         self.parent = Dingus()
         self.child = self.parent[0]
@@ -132,7 +132,7 @@ class WhenCallingListItemOfDingus:
         assert self.child.calls('()').one()
 
 
-class WhenAccessingMagicAttributes:
+class WhenAccessingMagicAttributes(object):
     def should_raise_attribute_error_for_pyobjc_object(self):
         # PyObjC uses __pyobjc_object__ to get an ObjC object from a Python
         # object. Returning a Mock will cause a crash.
@@ -147,7 +147,7 @@ INFIX_OPERATORS = ['add', 'and_', 'div', 'lshift', 'mod', 'mul', 'or_',
                    'pow', 'rshift', 'sub', 'xor']
 
 
-class WhenApplyingInfixOperators:
+class WhenApplyingInfixOperators(object):
     def __init__(self):
         self.operators = [getattr(operator, operator_name)
                           for operator_name in INFIX_OPERATORS]
@@ -170,7 +170,7 @@ class WhenApplyingInfixOperators:
             yield assert_call_was_logged, left, magic_method_name, right
 
 
-class WhenApplyingAugmentedOperators:
+class WhenApplyingAugmentedOperators(object):
     AUGMENTED_OPERATORS = ['i%s' % operator_name.replace('_', '')
                            for operator_name in INFIX_OPERATORS]
 
@@ -199,12 +199,12 @@ def assert_call_was_logged(dingus, method_name, *args):
     assert dingus.calls(method_name, *args).once()
 
 
-class WhenComputingLength:
+class WhenComputingLength(object):
     def should_be_one(self):
         assert len(Dingus()) == 1
 
 
-class WhenIterating:
+class WhenIterating(object):
     def should_return_one_dingus(self):
         assert len(list(Dingus())) == 1
 
@@ -212,7 +212,7 @@ class WhenIterating:
         assert isinstance(list(Dingus())[0], Dingus)
 
 
-class WhenAccessingReturnValueBeforeCalling:
+class WhenAccessingReturnValueBeforeCallingi(object):
     def setup(self):
         self.dingus = Dingus()
 
@@ -230,7 +230,7 @@ class WhenAccessingReturnValueBeforeCalling:
         assert self.dingus.return_value is original_return_value
 
 
-class WhenSettingReturnValue:
+class WhenSettingReturnValue(object):
     def setup(self):
         self.dingus = Dingus()
         self.return_value = 5
@@ -244,7 +244,7 @@ class WhenSettingReturnValue:
         assert self.dingus.return_value is self.return_value
 
 
-class WhenSettingAttributes:
+class WhenSettingAttributes(object):
     def setup(self):
         self.dingus = Dingus()
         self.attr = Dingus()
@@ -260,14 +260,14 @@ class WhenSettingAttributes:
         assert self.dingus['attr'] is not self.dingus['attr2']
 
 
-class WhenDeletingAttributes:
+class WhenDeletingAttributes(object):
     def should_record_deletion(self):
         dingus = Dingus()
         del dingus.foo
         assert dingus.calls('__delattr__', 'foo').once()
 
 
-class WhenAccessingItems:
+class WhenAccessingItems(object):
     def should_log_access(self):
         dingus = Dingus()
         dingus['item']
@@ -284,7 +284,7 @@ class WhenAccessingItems:
         assert dingus[('x', 'y')]
 
 
-class WhenSettingItems:
+class WhenSettingItems(object):
     def setup(self):
         self.dingus = Dingus()
         self.item = Dingus()
@@ -312,7 +312,7 @@ class WhenSettingItems:
         assert dingus[('x', 'y')] == 'foo'
 
 
-class WhenNothingIsSet:
+class WhenNothingIsSet(object):
     def setup(self):
         self.attribute_name = 'attr'
         self.dingus = Dingus()
@@ -335,14 +335,14 @@ class WhenNothingIsSet:
         assert hasattr(self.dingus, self.attribute_name)
 
 
-class WhenSpecifyingAttributesViaKeywordArguments:
+class WhenSpecifyingAttributesViaKeywordArguments(object):
     def should_set_specified_attributes(self):
         attr = Dingus()
         object_with_attr = Dingus(attr=attr)
         assert object_with_attr.attr is attr
 
 
-class WhenSpecifyingMethodReturnValuesViaKeywordArguments:
+class WhenSpecifyingMethodReturnValuesViaKeywordArguments(object):
     def should_define_methods_returning_specified_values(self):
         result = Dingus()
         object_with_result = Dingus(method__returns=result)
@@ -355,14 +355,14 @@ class WhenSpecifyingMethodReturnValuesViaKeywordArguments:
         assert object_with_result.calls('method')
 
 
-class WhenCallingInitMethod:
+class WhenCallingInitMethod(object):
     def should_record_call(self):
         dingus = Dingus()
         dingus.__init__()
         assert dingus.calls('__init__').one()
 
 
-class WhenCreatingMultipleDinguses:
+class WhenCreatingMultipleDinguses(object):
     def should_return_a_dingus_when_asked_for_one(self):
         assert len(Dingus.many(1)) == 1
 
@@ -378,7 +378,7 @@ class WhenCreatingMultipleDinguses:
     def should_return_nothing_when_asked_for_zero_dinguses(self):
         assert not Dingus.many(0)
 
-class WhenPicklingDingus:
+class WhenPicklingDingus(object):
     def setup(self):
         self.dingus = Dingus("something")
 
@@ -408,7 +408,7 @@ class WhenPicklingDingus:
         assert self.unpickled_dingus.child.__init__ == self.unpickled_dingus.child._fake_init
 
 
-class WhenDingusIsSubclassed:
+class WhenDingusIsSubclassed(object):
     def should_return_subclass_instances_instead_of_dinguses(self):
         class MyDingus(Dingus):
             pass
@@ -417,7 +417,7 @@ class WhenDingusIsSubclassed:
         assert isinstance(dingus.foo, MyDingus)
 
 
-class WhenDingusIsDeepCopied:
+class WhenDingusIsDeepCopied(object):
     def should_retain_attributes(self):
         dingus = Dingus(foo=1)
         assert copy.deepcopy(dingus).foo == 1
@@ -429,7 +429,7 @@ class WhenDingusIsDeepCopied:
         assert copied_dingus.calls('frob').once()
         assert not dingus.calls('frob')
 
-class WhenUsedAsAContextManager:
+class WhenUsedAsAContextManager(object):
     def should_not_raise_an_exception(self):
         with Dingus():
             pass

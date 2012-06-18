@@ -3,7 +3,7 @@ from dingus import Dingus
 from socket_reader import read_socket
 
 
-class TestSocketReader:
+class TestSocketReader(object):
     def setup(self):
         self.socket = Dingus()
         self.data_that_was_read = read_socket(self.socket)
