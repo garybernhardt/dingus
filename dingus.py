@@ -379,12 +379,12 @@ def exception_raiser(exception):
 
 
 def assert_call(dingus, method,  *args, **kwargs):
-    call = dingus.calls(method, *args, **kwargs)
-    if call:
+    expected_call = dingus.calls(method, *args, **kwargs)
+    if expected_call:
         return
     recorded_calls = dingus.calls
     calls_description = "No calls recorded" if not recorded_calls \
-                        else "Recorded calls:\n%s" % recorded_calls
+                                            else "Recorded calls: %s" % recorded_calls
     message = "Expected a call to method: '%s', " % method + \
               "args: %s, kwargs: %s, " % (args, kwargs) + \
               "dingus: %s" % dingus + \

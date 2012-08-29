@@ -51,24 +51,33 @@ class WhenThereIsNoCallsForTheMatchedArgs(AssertCallTest):
         assert_call(self.ding, 'foo', 'bar', qux=1)
 
     def should_show_a_friendly_error_message(self):
-        try:
-            assert_call(self.ding, 'foo')
-        except AssertionError, e:
-            self._assert_message(e.message, 'foo', (), {})
+        self._test_expectation_message('foo')
 
     def should_show_a_friendly_error_message_with_call_to_other_method(self):
         self.ding.bar()
+        self._test_expectation_message('foo')
+
+    def should_show_a_friendly_error_message_with_args(self):
+        self._test_expectation_message('foo', 'baz', 'qux')
+
+    def should_show_a_friendly_error_message_with_args_and_kargs(self):
+        self._test_expectation_message('foo', 'baz', 'qux', one=1, two=2)
+
+    def _test_expectation_message(self, method, *args, **kwargs):
         try:
-            assert_call(self.ding, 'foo')
+            assert_call(self.ding, method, *args, **kwargs)
         except AssertionError, e:
-            self._assert_message(e.message, 'foo', (), {})
+            self._assert_message(e.message, method, args, kwargs)
+        else:
+            assert False, 'should not be here'
 
     def _assert_message(self, message, method, args, kwargs):
             expected, recorded_calls = message.split('\n')
+
             assert "Expected a call to method: '%s', args: %s, kwargs: %s, " % (method, args, kwargs)  + \
-                   "dingus: %s" % self.ding == \
-                    expected
+                   "dingus: %s" % self.ding == expected
+
             if not self.ding.calls:
                 assert "No calls recorded" == recorded_calls
             else:
-                assert "Recorded calls:\n%s" == recorded_calls
+                assert ("Recorded calls: %s" % self.ding.calls) == recorded_calls
