@@ -6,7 +6,7 @@ from tests.test_case_fixture import ClassUnderTest, Collaborator
 from dingus import DingusTestCase, Dingus
 
 
-class WhenObjectIsExcludedFromTest(object):
+class WhenObjectIsExcludedFromTest:
     def setup(self):
         class TestCase(DingusTestCase(module.ClassUnderTest,
                                       exclude=['Collaborator'])):
@@ -27,7 +27,7 @@ class WhenObjectIsExcludedFromTest(object):
         self.test_case_instance.teardown()
 
 
-class WhenCallingSetupFunction(object):
+class WhenCallingSetupFunction:
     def setup(self):
         class TestCase(DingusTestCase(module.ClassUnderTest)):
             pass
@@ -51,7 +51,7 @@ class WhenCallingSetupFunction(object):
         assert module.ClassUnderTest is ClassUnderTest
 
 
-class WhenCallingTeardownFunction(object):
+class WhenCallingTeardownFunction:
     def setup(self):
         self.original_module_dict = module.__dict__.copy()
         class TestCase(DingusTestCase(module.ClassUnderTest)):

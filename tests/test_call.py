@@ -3,7 +3,7 @@ import pickle
 from dingus import Call
 
 
-class WhenInstantiated(object):
+class WhenInstantiated:
     def setup(self):
         self.call = Call('test name',
                          'test args',

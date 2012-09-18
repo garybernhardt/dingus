@@ -17,7 +17,7 @@ STAT_INTERVAL = .25 # seconds
 CRAWL_INTERVAL = 10 # seconds
 
 
-class Crawler(object):
+class Crawler:
     def __init__(self):
         self.last_crawl = 0
         self.filenames = []

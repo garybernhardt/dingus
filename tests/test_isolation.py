@@ -5,7 +5,7 @@ import os
 from dingus import Dingus, patch, isolate
 
 
-class WhenPatchingObjects(object):
+class WhenPatchingObjects:
     @patch('urllib2.urlopen')
     def should_replace_object_with_dingus(self):
         assert isinstance(urllib2.urlopen, Dingus)
@@ -31,7 +31,7 @@ class WhenPatchingObjects(object):
         with patch('urllib2.urlopen'):
             assert str(urllib2.urlopen) == '<Dingus urllib2.urlopen>'
 
-class WhenIsolating(object):
+class WhenIsolating:
     def should_isolate(self):
         @isolate("os.popen")
         def ensure_isolation():
@@ -43,7 +43,7 @@ class WhenIsolating(object):
         assert not isinstance(os.walk, Dingus)
 
 
-class WhenIsolatingSubmoduleObjects(object):
+class WhenIsolatingSubmoduleObjects:
     def should_isolate(self):
         @isolate("os.path.isdir")
         def ensure_isolation():

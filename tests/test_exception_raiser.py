@@ -3,7 +3,7 @@ from nose.tools import assert_raises
 from dingus import exception_raiser
 
 
-class WhenCalled(object):
+class WhenCalled:
     def setup(self):
         exception = ValueError()
         self.raise_exception = exception_raiser(exception)
