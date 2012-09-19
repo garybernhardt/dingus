@@ -242,6 +242,19 @@ class Dingus(object):
         self.calls = CallList()
         self._children = {}
 
+    def assert_call(self, *args, **kwargs):
+        expected_call = self.calls('()', *args, **kwargs)
+        if expected_call:
+            return
+        recorded_calls = self.calls
+        calls_description = "No calls recorded" if not recorded_calls \
+                                                else "Recorded calls: %s" % recorded_calls
+        message = "Expected a call to: '%s', " % self + \
+                  "args: %s, kwargs: %s, " % (args, kwargs) + \
+                  "\n" + calls_description
+
+        raise AssertionError(message)
+
     def _get_return_value(self):
         if self._return_value is NoReturnValue:
             self._return_value = self._create_child('()')
@@ -376,4 +389,3 @@ def exception_raiser(exception):
     def raise_exception(*args, **kwargs):
         raise exception
     return raise_exception
-

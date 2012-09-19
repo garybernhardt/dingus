@@ -31,7 +31,6 @@ class WhenPatchingObjects:
         with patch('urllib2.urlopen'):
             assert str(urllib2.urlopen) == '<Dingus urllib2.urlopen>'
 
-
 class WhenIsolating:
     def should_isolate(self):
         @isolate("os.popen")

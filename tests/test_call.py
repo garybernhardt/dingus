@@ -29,6 +29,3 @@ class WhenPickled(WhenInstantiated):
         call_str = pickle.dumps(self.call, pickle.HIGHEST_PROTOCOL)
         self.call = pickle.loads(call_str)
 
-
-        
-
