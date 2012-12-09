@@ -45,7 +45,7 @@ entry in the call list contains:
 
 * the name of the method called (or "()" if the dingus itself was called)
 * The arguments, or () if none
-* The keyword argumnets, or {} if none
+* The keyword arguments, or {} if none
 * The value that was returned to the caller
 
 Here is a list of the calls we've made to d so far:
