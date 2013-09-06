@@ -31,6 +31,13 @@ class WhenPatchingObjects:
         with patch('urllib2.urlopen'):
             assert str(urllib2.urlopen) == '<Dingus urllib2.urlopen>'
 
+    def should_set_wrapped_on_patched_function(self):
+        def urllib2():
+            pass
+        patch_urllib2 = patch('urllib2.urlopen')(urllib2)
+        assert patch_urllib2.__wrapped__ == urllib2
+
+
 class WhenIsolating:
     def should_isolate(self):
         @isolate("os.popen")
