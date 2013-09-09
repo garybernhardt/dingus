@@ -75,6 +75,7 @@ class _Patcher:
                 return fn(*args, **kwargs)
             finally:
                 self.restore_object()
+        new_fn.__wrapped__ = fn
         return new_fn
 
     def __enter__(self):
